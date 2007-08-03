@@ -152,19 +152,15 @@ class Echoe
 
     desc 'Package and upload the release to Rubyforge.'
     task :release => [:clean, :package] do |t|      
-
-      if ask "Release version #{version} to Rubyforge?"      
+      
+      say "\n"
+      if agree "Release #{name}-#{version} to Rubyforge? "      
         pkg = "pkg/#{name}-#{version}"
         pkg_gem = pkg + ".gem"
         pkg_tar = pkg + ".tgz"
         pkg_tar_gz = pkg + ".tar.gz"
         pkg_zip = pkg + ".zip" 
         
-        if $DEBUG then
-          puts "release_id = rf.add_release #{rubyforge_name.inspect}, #{name.inspect}, #{version.inspect}, \"#{pkg_tar}\""
-          puts "rf.add_file #{rubyforge_name.inspect}, #{name.inspect}, release_id, \"#{pkg_gem}\""
-        end
-  
         rf = RubyForge.new
         puts "Logging in"
         rf.login
