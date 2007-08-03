@@ -76,3 +76,7 @@ Cleaning:
 * <tt>redocs</tt> -  Force a rebuild of the Rdoc files.
 * <tt>repackage</tt> -  Force a rebuild of the package files.
 
+== Further resources
+
+* http://blog.evanweaver.com/pages/code#echoe
+* http://rubyforge.org/forum/forum.php?forum_id=13986
