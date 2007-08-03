@@ -26,7 +26,12 @@ class Echoe
     "-w -I#{%w(lib ext bin test).join(File::PATH_SEPARATOR)}" +
     (RUBY_DEBUG ? " #{RUBY_DEBUG}" : '')
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :extra_deps, :name, :need_tar, :need_tar_gz, :need_zip, :rdoc_pattern, :rubyforge_name, :summary, :test_patterns, :url, :version, :docs_host, :rdoc_template 
+  
+  # user-configurable
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :extra_deps, :name, :need_tar, :need_tar_gz, :need_zip, :rdoc_pattern, :rubyforge_name, :summary, :test_patterns, :url, :version, :docs_host, :rdoc_template
+  
+  # best left alone
+  attr_accessor :lib_files, :test_files, :bin_files, :spec
   
   def initialize(name, version = nil)
     self.name = name
