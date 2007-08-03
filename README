@@ -39,11 +39,13 @@ More advanced configuration is described in the Echoe class.
 
 == Deploying your gem
 
-Now, to build your documentation and deploy the gem:
+First, run <tt>rubyforge setup</tt> and <tt>rubyforge config</tt> if you haven't already. Make sure your Rubyforge password is correctly set.
+
+Now, to deploy the gem and documentation:
 
   rake build_manifest
-  rake publish_docs
   rake release
+  rake publish_docs
 
 == All Rake tasks
 
