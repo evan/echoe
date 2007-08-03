@@ -47,7 +47,7 @@ Now, to deploy the gem and documentation:
   rake release
   rake publish_docs
 
-You should check your manifest into version control after you build it. You only need to rebuild it if you add or remove files from the package structure.
+Once you build your manifest, you only need to rebuild it if you add or remove files from the package structure.
 
 == All Rake tasks
 
