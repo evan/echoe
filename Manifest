@@ -1,0 +1,8 @@
+./CHANGELOG
+./LICENSE
+./README
+./Rakefile
+./bin/echoe
+./lib/echoe.rb
+./test/test_echoe.rb
+./Manifest
