@@ -1,31 +1,15 @@
 
 echoe
 
-Echoe is a simple tool for working with rubygems. 
+Echoe is a simple tool for working with Rubygems. It generates Rake tasks for documentation, testing, packaging, and deployment.
 
 == License
 
-Copyright 2007 Cloudburst, LLC. See included LICENSE file. 
-
-Portions copyright 2006 Ryan Davis, Zen Spider Software, and used with permission. See included MIT-LICENSE file.
-
-== Description
-
-Echoe is a simple tool for working with rubygems. It generates rake tasks for rdoc generation, testing, packaging, and deployment.
-
-== Requirements
-
-* rake
-* <tt>rubyforge</tt> gem
-* <tt>highline</tt> gem
-
-== Installation
-
-  sudo gem install echoe
+Copyright 2007 Cloudburst, LLC. See included LICENSE file. Portions copyright 2006 Ryan Davis, Zen Spider Software, and used with permission. See included MIT-LICENSE file.
 
 == Usage
 
-Organize your gem according to the usual package structure:
+First, organize your gem according to the usual structure:
 
   lib/
   bin/  
@@ -35,7 +19,7 @@ Organize your gem according to the usual package structure:
   CHANGELOG
   Rakefile
 
-Your <tt>CHANGELOG</tt> should be formatted as follows:
+Your <tt>CHANGELOG</tt> should be formatted as follows (including newlines):
 
   v2.1. newest change
   
@@ -43,39 +27,46 @@ Your <tt>CHANGELOG</tt> should be formatted as follows:
   
   v1.9. oldest change
   
-etc.  
+This way Echoe can parse the latest version and changeset message automatically.
 
 Your <tt>Rakefile</tt> needs the following minimal contents:
 
   require "rubygems"
-  require "echoe"
-  
+  require "echoe"  
   Echoe.new("gem_name")
   
-Not kidding.
+More advanced configuration is described in the Echoe class.
 
-== Available Rake tasks
+== Deploying your gem
 
-Once you have your <tt>Rakefile</tt> set up, you can run the following Rake tasks.
+Now, to build your documentation and deploy the gem:
 
-Packaging tasks:
+  rake build_manifest
+  rake publish_docs
+  rake release
+
+== All Rake tasks
+
+The following tasks are made available to your gem.
+
+Packaging:
 
 * <tt>build_manifest</tt> -  Build a Manifest list.
 * <tt>docs</tt> -  Build the documentation.
 * <tt>package</tt> -  Build all the packages.
 
-Testing tasks:
+Testing:
 
 * <tt>test</tt> -  Run the test suite.
 * <tt>install</tt> -  Install the gem locally.
 * <tt>uninstall</tt> -  Uninstall the gem.
 
-Upload tasks:
+Upload:
 
 * <tt>publish_docs</tt> -  Publish documentation to the web.
-* <tt>release</tt> -  Package and upload the release to Rubyforge.
+* <tt>release</tt> -  Package and upload the latest release to Rubyforge.
 
-Cleaning tasks:
+Cleaning:
 
 * <tt>clean</tt> -  Delete all the generated documentation and packages.
 * <tt>redocs</tt> -  Force a rebuild of the Rdoc files.

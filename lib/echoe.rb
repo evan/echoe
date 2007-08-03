@@ -10,7 +10,55 @@ require 'highline/import'
 gem 'rubyforge', '>= 0.4.0'
 require 'rubyforge'
 
+=begin rdoc
 
+Echoe includes some optional accessors for more advanced gem configuration.
+
+For example, Echoe's own <tt>Rakefile</tt> looks like this:
+
+  Echoe.new('echoe') do |p|
+    p.rubyforge_name = "fauna"
+    p.author = "Evan Weaver"
+    p.summary = "Echoe is a simple tool for packaging Rubygems."
+    p.url = "http://blog.evanweaver.com/pages/code#echoe"
+    p.docs_host = "blog.evanweaver.com:~/www/snax/public/files/doc/"
+    p.extra_deps = ['rake', 'rubyforge >= 0.4.0', 'highline']
+  end
+
+== Available options
+
+Descriptive options:
+
+* <tt>author</tt> - Your name.
+* <tt>email</tt> - Your email address.
+* <tt>description</tt> - A more detailed description of the library.
+* <tt>summary</tt> - A shorter description of the library.
+* <tt>url</tt> - A url for the library.
+
+Version options:
+
+* <tt>version</tt> - A string for the version number. Parsed from CHANGELOG otherwise.
+* <tt>changes</tt> - A string describing the most recent changes. Parsed from CHANGELOG otherwise.
+
+Packaging options:
+
+* <tt>extra_deps</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
+* <tt>manifest_name</tt> - The name of the manifest file (defaults to <tt>Manifest</tt>).
+* <tt>need_tar</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
+* <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
+* <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
+
+Publishing options:
+
+* <tt>rubyforge_name</tt> - The name of the Rubyforge project to upload to (defaults to the name of the gem).
+* <tt>docs_host</tt> - A host and path to publish the documentation to (defaults to the Rubyforge project).
+
+Documentation options:
+
+* <tt>rdoc_pattern</tt> - A regex for filenames that should be passed to RDoc.
+* <tt>rdoc_template</tt> - A path to an RDoc template (defaults to the generic template).
+
+=end
 
 class Echoe
 
@@ -49,13 +97,13 @@ class Echoe
     self.version = if version
       version
     elsif File.exist? "CHANGELOG"
-      open("CHANGELOG").read[/^v([\d\.]+)\. /, 1]
+      open("CHANGELOG").read[/^\s*v([\d\.]+)\. /, 1]
     else
       raise "No version supplied in Rakefile"
     end
 
     self.changes = if File.exist? "CHANGELOG"
-      open("CHANGELOG").read[/^v([\d\.]+\. .*)/, 1]
+      open("CHANGELOG").read[/^\s*v([\d\.]+\. .*)/, 1]
     else
       ""
     end
@@ -228,7 +276,7 @@ class Echoe
       end      
     end
         
-    task :doc => [:docs]
+    task :doc => [:redocs]
 
     desc 'Delete the generated documentation and packages'
     task :clean => [ :clobber_docs, :clobber_package ] do
