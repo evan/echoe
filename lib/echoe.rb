@@ -81,7 +81,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :extra_deps, :name, :need_tar, :need_tar_gz, :need_zip, :rdoc_pattern, :rubyforge_name, :summary, :test_patterns, :url, :version, :docs_host, :rdoc_template, :manifest_name
   
   # best left alone
-  attr_accessor :lib_files, :test_files, :bin_files, :spec
+  attr_accessor :lib_files, :test_files, :bin_files, :spec, :rdoc_options
   
   def initialize(name, version = nil)
     # Defaults
@@ -111,6 +111,7 @@ class Echoe
     self.description = ""
     self.summary = ""
     self.rdoc_pattern = /^(lib|bin|tasks)|README|CHANGELOG|LICENSE|txt$/
+    self.rdoc_options = ['--line-numbers', '--inline-source']
     self.extra_deps = []
     self.manifest_name = "Manifest"
 
@@ -228,7 +229,8 @@ class Echoe
 
     Rake::RDocTask.new(:docs) do |rd|      
       rd.main = Dir['*'].detect {|f| f =~ /^readme/i}
-      rd.options << '--line-numbers' << '--inline-source'
+      rd.options += Array(rdoc_options)
+      
       rd.rdoc_dir = 'doc'
 
       files = (spec.files.grep(rdoc_pattern) - [manifest_name]).uniq
