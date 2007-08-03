@@ -1,7 +1,8 @@
-./CHANGELOG
-./LICENSE
-./Manifest
-./README
-./Rakefile
-./lib/echoe.rb
-./test/test_echoe.rb
+test/test_echoe.rb
+lib/echoe.rb
+Rakefile
+README
+Manifest
+MIT-LICENSE
+LICENSE
+CHANGELOG

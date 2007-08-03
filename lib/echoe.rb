@@ -10,6 +10,8 @@ require 'highline/import'
 gem 'rubyforge', '>= 0.4.0'
 require 'rubyforge'
 
+
+
 class Echoe
 
   rubyprefix = Config::CONFIG['prefix']
@@ -28,13 +30,21 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :extra_deps, :name, :need_tar, :need_tar_gz, :need_zip, :rdoc_pattern, :rubyforge_name, :summary, :test_patterns, :url, :version, :docs_host, :rdoc_template
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :extra_deps, :name, :need_tar, :need_tar_gz, :need_zip, :rdoc_pattern, :rubyforge_name, :summary, :test_patterns, :url, :version, :docs_host, :rdoc_template, :manifest_name
   
   # best left alone
   attr_accessor :lib_files, :test_files, :bin_files, :spec
   
   def initialize(name, version = nil)
+    # Defaults
+
     self.name = name
+    self.rubyforge_name = name.downcase
+    self.url = ""
+    self.author = ""
+    self.email = ""
+    self.clean_pattern = %w(diff diff.txt email.txt ri *.gem **/*~)
+    self.test_patterns = ['test/**/test_*.rb']
     
     self.version = if version
       version
@@ -44,25 +54,19 @@ class Echoe
       raise "No version supplied in Rakefile"
     end
 
-    # Defaults
-    self.rubyforge_name = name.downcase
-    self.url = ""
-    self.author = ""
-    self.email = ""
-    self.clean_pattern = %w(diff diff.txt email.txt ri *.gem **/*~)
-    self.test_patterns = ['test/**/test_*.rb']
-    
     self.changes = if File.exist? "CHANGELOG"
       open("CHANGELOG").read[/^v([\d\.]+\. .*)/, 1]
     else
       ""
     end
-    
+        
     self.description = ""
     self.summary = ""
-    self.rdoc_pattern = /^(\.\/|)(lib|bin|tasks)|README|CHANGELOG|LICENSE|txt$/
+    self.rdoc_pattern = /^(lib|bin|tasks)|README|CHANGELOG|LICENSE|txt$/
     self.extra_deps = []
-    self.need_tar = false
+    self.manifest_name = "Manifest"
+
+    self.need_tar = false    
     self.need_tar_gz = true
     self.need_zip = false
 
@@ -72,10 +76,9 @@ class Echoe
   end
 
   def define_tasks
-    desc 'Run the default tasks'
     task :default => :test
 
-    desc 'Run the test suite. Use FILTER to add to the command line.'
+    desc 'Run the test suite'
     task :test do
       run_tests
     end
@@ -99,11 +102,10 @@ class Echoe
         s.add_dependency(*dep)
       end
 
-      manifest = File.exist?('Manifest.txt') ? 'Manifest.txt' : 'Manifest'
       begin
-        s.files = File.read(manifest).split
+        s.files = File.read(manifest_name).split
       rescue Errno::ENOENT
-        $stderr.puts "Missing Manifest. You can build one with\n$ rake build_manifest"
+        $stderr.puts "Missing Manifest. You can build one with\n$ rake build_manifest."
       end
       s.executables = s.files.grep(/bin/) { |f| File.basename(f) }
 
@@ -120,11 +122,6 @@ class Echoe
 
     end
 
-    desc 'Show information about the gem.'
-    task :debug_gem do
-      puts spec.to_ruby
-    end
-
     self.lib_files = spec.files.grep(/^lib/)
     self.bin_files = spec.files.grep(/^bin/)
     self.test_files = spec.files.grep(/^test/)
@@ -135,22 +132,17 @@ class Echoe
       pkg.need_zip = @need_zip
     end
 
-    desc 'Install the package as a gem'
+    desc 'Install the gem'
     task :install => [:clean, :package] do
       sh "sudo gem install pkg/*.gem"
     end
 
-    desc 'Uninstall the package.'
+    desc 'Uninstall the gem'
     task :uninstall do
-      Dir.chdir RUBYLIB do
-        rm_f((lib_files + test_files).map { |f| File.basename f })
-      end
-      Dir.chdir File.join(PREFIX, 'bin') do
-        rm_f bin_files.map { |f| File.basename f }
-      end
+      sh "sudo gem uninstall #{name}"
     end
 
-    desc 'Package and upload the release to Rubyforge.'
+    desc 'Package and upload the release to Rubyforge'
     task :release => [:clean, :package] do |t|      
       
       say "\n"
@@ -180,27 +172,18 @@ class Echoe
   
         begin
           rf.add_release rubyforge_name, name, version, *files
-        rescue NoMethodError => boom
-         # be silent
+        rescue NoMethodError
         end
       end
       
     end
 
-    ############################################################
-    # Doco
-
     Rake::RDocTask.new(:docs) do |rd|      
       rd.main = Dir['*'].detect {|f| f =~ /^readme/i}
-      rd.options << '-d' if RUBY_PLATFORM !~ /win32/ and `which dot` =~ /\/dot/
       rd.options << '--line-numbers' << '--inline-source'
       rd.rdoc_dir = 'doc'
-      files = spec.files.grep(rdoc_pattern)
-      files -= ['Manifest.txt', 'Manifest']
-      files.uniq!
-      
-      #puts "Rdoc files are:\n#{files.map{|s| '  ' + s + "\n"}}"
-      
+
+      files = (spec.files.grep(rdoc_pattern) - [manifest_name]).uniq
       rd.rdoc_files.push *files
 
       if rdoc_template
@@ -209,16 +192,11 @@ class Echoe
         rd.template = ENV['RDOC_TEMPLATE']
       end      
 
-      title = name.capitalize if name.downcase == name
+      title = name.downcase == name ? name.capitalize : name
       rd.options << "-t #{title}"
     end
 
-    desc "Generate ri locally for testing"
-    task :ridocs => :clean do
-      sh %q{ rdoc --ri -o ri . }
-    end
-
-    desc 'Publish RDoc to RubyForge'
+    desc "Publish documentation to #{docs_host ? "'#{docs_host}'" : "rubyforge"}"
     task :publish_docs => [:clean, :docs] do
 
       local_dir = 'doc'
@@ -245,18 +223,14 @@ class Echoe
         # you may need ssh keys configured for this to work
         host, dir = docs_host.split(":")
         dir.chomp!("/")
-        sh("ssh #{host} 'rm -rf #{dir}/#{remote_dir_name}'") # XXX too dangerous
+        sh("ssh #{host} 'rm -rf #{dir}/#{remote_dir_name}'") # XXX too dangerous?
         sh("scp -qr #{local_dir} #{host}:#{dir}/#{remote_dir_name}")
       end      
     end
-    
-    
+        
     task :doc => [:docs]
 
-    ############################################################
-    # Misc/Maintenance:
- 
-    desc 'Clean up all the extras'
+    desc 'Delete the generated documentation and packages'
     task :clean => [ :clobber_docs, :clobber_package ] do
       clean_pattern.each do |pattern|
         files = Dir[pattern]
@@ -264,63 +238,33 @@ class Echoe
       end
     end
 
-    desc "Verify the manifest"
-    task :check_manifest => :clean do
-      f = "Manifest.tmp"
-      require 'find'
-      files = []
-      Find.find '.' do |path|
-        next unless File.file? path
-        next if path =~ /svn|tmp$/
-        files << path[2..-1]
-      end
-      files = files.sort.join "\n"
-      File.open f, 'w' do |fp| fp.puts files end
-
-      manifest = "Manifest"
-      manifest += ".txt" if File.exist? "Manifest.txt"
-
-      system "diff -du #{manifest}.txt #{f}"
-      rm f
-    end
-
-    desc "Build a Manifest from your current tree"
+    desc "Build a Manifest list"
     task :build_manifest do
       files = []
-      find_files = proc { |dir| 
-        Dir["#{dir}/**"].each do |file|
-          next if ["#{dir}/pkg", "#{dir}/doc"].include? file
-          File.directory?(file) ? find_files[file] : files << file
+      Find.find '.' do |file|
+        file = file[2..-1]
+        unless !file or file =~ /^(pkg|doc)|\.svn|CVS|\.bzr/ or File.directory? file
+          files << file
         end
-      }
-      manifest = File.exist?("./Manifest.txt") ? "./Manifest.txt" : "./Manifest"
-      find_files['.'] 
-      files = (files << manifest).uniq
-      File.open(manifest, 'w').puts files
+      end
+      files = (files << manifest_name).uniq
+      File.open(manifest_name, 'w').puts files
       puts files
     end
-  end # end define
+  end
 
-  def run_tests(multi=false) # :nodoc:
-    msg = multi ? :sh : :ruby
-    cmd = if test ?f, 'test/test_all.rb' then
-            "#{RUBY_FLAGS} test/test_all.rb #{FILTER}"
-          else
-            tests = test_patterns.map { |g| Dir.glob(g) }.flatten << 'test/unit'
-            tests.map! {|f| %Q(require "#{f}")}
-            "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
-          end
-    cmd = "multiruby #{cmd}" if multi
-    send msg, cmd
+  def run_tests # :nodoc:
+    ruby(if File.exist? 'test/test_all.rb'
+      "#{RUBY_FLAGS} test/test_all.rb #{FILTER}"
+    else
+      tests = test_patterns.map { |g| Dir.glob(g) }.flatten << 'test/unit'
+      tests.map! {|f| %Q(require "#{f}")}
+      "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
+    end)
   end
 
 end
 
 class ::Rake::SshDirPublisher # :nodoc:
   attr_reader :host, :remote_dir, :local_dir
-end
-
-if $0 == __FILE__ then
-  out = `rake -T | egrep -v "redocs|repackage|clobber|trunk"`
-  puts out.gsub(/\#/, '-').gsub(/^rake /, '# * ')
 end

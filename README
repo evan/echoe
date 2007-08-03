@@ -1,98 +1,83 @@
+
 echoe
-    http://rubyforge.org/projects/fauna/
-    Evan Weaver
 
-== DESCRIPTION:
+Echoe is a simple tool for working with rubygems. 
 
-Echoe is a simple packaging tool for working with rubygems. It
-generates all the usual tasks for projects including rdoc generation,
-testing, packaging, and deployment.
+== License
 
-Tasks Provided:
+Copyright 2007 Cloudburst, LLC. See included LICENSE file. 
 
-* announce         - Generate email announcement file and post to rubyforge.
-* audit            - Run ZenTest against the package
-* check_manifest   - Verify the manifest
-* clean            - Clean up all the extras
-* debug_gem        - Show information about the gem.
-* default          - Run the default tasks
-* docs             - Build the docs HTML Files
-* email            - Generate email announcement file.
-* install          - Install the package. Uses PREFIX and RUBYLIB
-* install_gem      - Install the package as a gem
-* multi            - Run the test suite using multiruby
-* package          - Build all the packages
-* post_news        - Post announcement to rubyforge.
-* publish_docs     - Publish RDoc to RubyForge
-* release          - Package and upload the release to rubyforge.
-* ridocs           - Generate ri locally for testing
-* test             - Run the test suite. Use FILTER to add to the command line.
-* test_deps        - Show which test files fail when run alone.
-* uninstall        - Uninstall the package.
+Portions copyright 2006 Ryan Davis, Zen Spider Software, and used with permission. See included MIT-LICENSE file.
 
-First, see the Rakefile used to distribute Echoe itself. Also see the class rdoc for 
-help.
+== Description
 
-== DIFFERENCES FROM HOE:
+Echoe is a simple tool for working with rubygems. It generates rake tasks for rdoc generation, testing, packaging, and deployment.
 
-* Removes unnecessary meta-dependency on self in created gems
-* Better error reporting
-* Can auto-generate the Manifest
-
-== FEATURES/PROBLEMS:
-  
-* Provides 'echoe' command line tool for quick project directory creation.
-* Make making and maintaining Rakefiles fun and easy.
-
-== SYNOPSYS:
-
-  % sow [group] project
-
-or
-
-  require 'echoe'
-  
-  Echoe.new(projectname, version) do |p|
-    # ... project specific data ...
-  end
-
-  # ... project specific tasks ...
-
-== REQUIREMENTS:
+== Requirements
 
 * rake
-* rubyforge
-* rubygems
+* <tt>rubyforge</tt> gem
+* <tt>highline</tt> gem
 
-== INSTALL:
+== Installation
 
-* sudo gem install echoe
+  sudo gem install echoe
 
-== LICENSE:
+== Usage
 
-Copyright 2007 Evan Weaver.
-Licensed under the Academic Free License 3.0. See LICENSE.txt, included. 
-The following license also applies to portions of the software:
+Organize your gem according to the usual package structure:
 
-(The MIT License)
+  lib/
+  bin/  
+  ext/
+  README
+  LICENSE
+  CHANGELOG
+  Rakefile
 
-Copyright (c) 2006 Ryan Davis, Zen Spider Software
+Your <tt>CHANGELOG</tt> should be formatted as follows:
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+  v2.1. newest change
+  
+  v2. older change
+  
+  v1.9. oldest change
+  
+etc.  
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+Your <tt>Rakefile</tt> needs the following minimal contents:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  require "rubygems"
+  require "echoe"
+  
+  Echoe.new("gem_name")
+  
+Not kidding.
+
+== Available Rake tasks
+
+Once you have your <tt>Rakefile</tt> set up, you can run the following Rake tasks.
+
+Packaging tasks:
+
+* <tt>build_manifest</tt> -  Build a Manifest list.
+* <tt>docs</tt> -  Build the documentation.
+* <tt>package</tt> -  Build all the packages.
+
+Testing tasks:
+
+* <tt>test</tt> -  Run the test suite.
+* <tt>install</tt> -  Install the gem locally.
+* <tt>uninstall</tt> -  Uninstall the gem.
+
+Upload tasks:
+
+* <tt>publish_docs</tt> -  Publish documentation to the web.
+* <tt>release</tt> -  Package and upload the release to Rubyforge.
+
+Cleaning tasks:
+
+* <tt>clean</tt> -  Delete all the generated documentation and packages.
+* <tt>redocs</tt> -  Force a rebuild of the Rdoc files.
+* <tt>repackage</tt> -  Force a rebuild of the package files.
+
