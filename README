@@ -47,7 +47,7 @@ Now, to deploy the gem and documentation:
   rake release
   rake publish_docs
 
-Once you build your manifest, you only need to rebuild it if you add or remove files from the package structure.
+Once you've built your manifest, you only need to rebuild it if you add or remove files from the package structure.
 
 == All Rake tasks
 
