@@ -28,7 +28,7 @@ For example, Echoe's own <tt>Rakefile</tt> looks like this:
 
 == Accessor options
 
-Descriptive:
+Descriptive options:
 
 * <tt>author</tt> - Your name.
 * <tt>email</tt> - Your email address.
@@ -37,12 +37,12 @@ Descriptive:
 * <tt>url</tt> - A url for the library.
 * <tt>install_message</tt> - A message to display after the gem is installed.
 
-Versioning:
+Versioning options:
 
 * <tt>version</tt> - A string for the version number. Parsed from CHANGELOG otherwise.
 * <tt>changes</tt> - A string describing the most recent changes. Parsed from CHANGELOG otherwise.
 
-Packaging:
+Packaging options:
 
 * <tt>dependencies</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
 * <tt>manifest_name</tt> - The name of the manifest file (defaults to <tt>Manifest</tt>).
@@ -50,12 +50,12 @@ Packaging:
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
 * <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
 
-Publishing:
+Publishing options:
 
 * <tt>project</tt> - The name of the Rubyforge project to upload to (defaults to the name of the gem).
 * <tt>docs_host</tt> - A host and path to publish the documentation to (defaults to the Rubyforge project).
 
-Documentation:
+Documentation options:
 
 * <tt>rdoc_pattern</tt> - A regex for filenames that should be passed to RDoc.
 * <tt>rdoc_template</tt> - A path to an RDoc template (defaults to the generic template).
