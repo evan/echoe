@@ -244,7 +244,7 @@ class Echoe
       rd.rdoc_dir = 'doc'
 
       files = (spec.files.grep(rdoc_pattern) - [manifest_name]).uniq
-      rd.rdoc_files.push *files
+      rd.rdoc_files.push(*files)
 
       if rdoc_template
         rd.template = rdoc_template 

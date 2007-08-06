@@ -10,13 +10,13 @@ class TestEchoe < Test::Unit::TestCase
   end
 
   def test_basics
-    boring = %w(clobber clobber_docs clobber_package doc doc/index.html pkg pkg/blah-1.0.0 pkg/blah-1.0.0.gem pkg/blah-1.0.0.tgz redocs repackage)
-    expected = %w(manifest clean debug_gem default docs email gem install install_gem multi package post_news publish_docs release ridocs test test_deps uninstall)
+    boring = %w(clobber clobber_docs clobber_package doc doc/index.html pkg pkg/blah-1.0.0 pkg/blah-1.0.0.gem pkg/blah-1.0.0.tar.gz redocs repackage default)
+    expected = %w(clean clobber clobber_docs clobber_package docs gem install manifest package publish_docs redocs release repackage test uninstall build_manifest)
     expected += boring
 
     Echoe.new('blah', '1.0.0')
-    tasks = Rake.application.tasks.map { |t| t.name }.sort
-
-    assert_equal expected.sort, tasks
+    tasks = Rake.application.tasks.map { |t| t.name }
+    assert((expected - tasks).empty?)
+    assert((tasks - expected).empty?)
   end
 end
