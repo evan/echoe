@@ -47,7 +47,7 @@ First, run <tt>rubyforge setup</tt> and <tt>rubyforge config</tt> if you haven't
 
 Now, to deploy the gem and documentation:
 
-  rake build_manifest
+  rake manifest
   rake release
   rake publish_docs
 
@@ -59,7 +59,7 @@ The following tasks are made available to your gem.
 
 Packaging:
 
-* <tt>build_manifest</tt> -  Build a manifest list.
+* <tt>manifest</tt> -  Build a manifest list.
 * <tt>docs</tt> -  Build the documentation.
 * <tt>package</tt> -  Build all the packages.
 

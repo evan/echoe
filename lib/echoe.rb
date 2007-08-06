@@ -303,7 +303,7 @@ class Echoe
     ### Manifest
 
     desc "Build a Manifest list"
-    task :build_manifest do
+    task :manifest do
       files = []
       Find.find '.' do |file|
         file = file[2..-1]
@@ -316,7 +316,7 @@ class Echoe
       puts files
     end
     
-    task :manifest => [:build_manifest]
+    task :build_manifest => [:manifest]
   
     ### Tests
   
