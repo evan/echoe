@@ -1,6 +1,7 @@
 
 require 'rubygems'
 require 'rake'
+require 'rake/clean'
 require 'rake/contrib/sshpublisher'
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
@@ -22,7 +23,7 @@ For example, Echoe's own <tt>Rakefile</tt> looks like this:
     p.summary = "A tool for packaging Ruby gems."
     p.url = "http://blog.evanweaver.com/pages/code#echoe"
     p.docs_host = "blog.evanweaver.com:~/www/snax/public/files/doc/"
-    p.extra_deps = ['rake', 'rubyforge >= 0.4.0', 'highline']
+    p.dependencies = ['rake', 'rubyforge >= 0.4.0', 'highline']
   end
 
 == Available options
@@ -34,6 +35,7 @@ Descriptive options:
 * <tt>description</tt> - A more detailed description of the library.
 * <tt>summary</tt> - A shorter description of the library.
 * <tt>url</tt> - A url for the library.
+* <tt>install_message</tt> - A message to display after the gem is installed.
 
 Version options:
 
@@ -42,7 +44,7 @@ Version options:
 
 Packaging options:
 
-* <tt>extra_deps</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
+* <tt>dependencies</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
 * <tt>manifest_name</tt> - The name of the manifest file (defaults to <tt>Manifest</tt>).
 * <tt>need_tar</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
@@ -50,7 +52,7 @@ Packaging options:
 
 Publishing options:
 
-* <tt>rubyforge_name</tt> - The name of the Rubyforge project to upload to (defaults to the name of the gem).
+* <tt>project</tt> - The name of the Rubyforge project to upload to (defaults to the name of the gem).
 * <tt>docs_host</tt> - A host and path to publish the documentation to (defaults to the Rubyforge project).
 
 Documentation options:
@@ -78,10 +80,13 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :extra_deps, :name, :need_tar, :need_tar_gz, :need_zip, :rdoc_pattern, :rubyforge_name, :summary, :test_patterns, :url, :version, :docs_host, :rdoc_template, :manifest_name
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tar, :need_tar_gz, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message
   
   # best left alone
-  attr_accessor :lib_files, :test_files, :bin_files, :spec, :rdoc_options
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name
+  
+  # legacy
+  attr_accessor :extra_deps
   
   def initialize(name, version = nil)
     # Defaults
@@ -92,7 +97,7 @@ class Echoe
     self.author = ""
     self.email = ""
     self.clean_pattern = %w(diff diff.txt email.txt ri *.gem **/*~)
-    self.test_patterns = ['test/**/test_*.rb']
+    self.test_pattern = ['test/**/test_*.rb']
     
     self.version = if version
       version
@@ -110,9 +115,10 @@ class Echoe
         
     self.description = ""
     self.summary = ""
+    self.install_message = nil
     self.rdoc_pattern = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE$/
     self.rdoc_options = ['--line-numbers', '--inline-source']
-    self.extra_deps = []
+    self.dependencies = []
     self.manifest_name = "Manifest"
 
     self.need_tar = false    
@@ -121,23 +127,21 @@ class Echoe
 
     yield self if block_given?
     
-    self.description = self.summary if self.description.empty?
-    self.summary = self.description if self.summary.empty?      
+    # set some post-defaults
+    self.description = summary if description.empty?
+    self.summary = description if summary.empty?
+    
+    # legacy compatibility
+    self.dependencies = extra_deps if extra_deps and dependencies.empty?
+    self.project = rubyforge_name if rubyforge_name and project.empty?
 
     define_tasks
   end
 
   def define_tasks
-    task :default => :test
 
-    desc 'Run the test suite'
-    task :test do
-      run_tests
-    end
-
-    ############################################################
-    # Packaging and Installing
-
+    ### Packaging and Installing
+    
     self.spec = Gem::Specification.new do |s|
       s.name = name
       s.version = version
@@ -146,10 +150,11 @@ class Echoe
       s.email = email
       s.homepage = url
       s.rubyforge_project = rubyforge_name
+      s.post_install_message = install_message if install_message
 
       s.description = description
 
-      extra_deps.each do |dep|
+      dependencies.each do |dep|
         dep = dep.split(" ") if dep.is_a? String
         s.add_dependency(*dep)
       end
@@ -169,7 +174,7 @@ class Echoe
       if File.exist? "test/test_all.rb"
         s.test_file = "test/test_all.rb"
       else
-        s.test_files = Dir[*test_patterns]
+        s.test_files = Dir[*test_pattern]
       end
 
     end
@@ -229,6 +234,8 @@ class Echoe
       end
       
     end
+    
+    ### RDoc
 
     Rake::RDocTask.new(:docs) do |rd|      
       rd.main = Dir['*'].detect {|f| f =~ /^readme/i}
@@ -248,6 +255,8 @@ class Echoe
       title = name.downcase == name ? name.capitalize : name
       rd.options << "-t #{title}"
     end
+        
+    task :doc => [:redocs]
 
     desc "Publish documentation to #{docs_host ? "'#{docs_host}'" : "rubyforge"}"
     task :publish_docs => [:clean, :docs] do
@@ -280,8 +289,8 @@ class Echoe
         sh("scp -qr #{local_dir} #{host}:#{dir}/#{remote_dir_name}")
       end      
     end
-        
-    task :doc => [:redocs]
+    
+    ### Clean
 
     desc 'Delete the generated documentation and packages'
     task :clean => [ :clobber_docs, :clobber_package ] do
@@ -290,6 +299,8 @@ class Echoe
         rm_rf files unless files.empty?
       end
     end
+    
+    ### Manifest
 
     desc "Build a Manifest list"
     task :build_manifest do
@@ -304,20 +315,25 @@ class Echoe
       File.open(manifest_name, 'w').puts files
       puts files
     end
-  end
+    
+    task :manifest => [:build_manifest]
   
-  task :manifest => [:build_manifest]
-
-  def run_tests # :nodoc:
-    ruby(if File.exist? 'test/test_all.rb'
-      "#{RUBY_FLAGS} test/test_all.rb #{FILTER}"
-    else
-      tests = test_patterns.map { |g| Dir.glob(g) }.flatten << 'test/unit'
-      tests.map! {|f| %Q(require "#{f}")}
-      "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
-    end)
+    ### Tests
+  
+    desc 'Run the test suite'
+    task :test do
+      ruby(if File.exist? 'test/test_all.rb'
+        "#{RUBY_FLAGS} test/test_all.rb #{FILTER}"
+      else
+        tests = test_pattern.map { |g| Dir.glob(g) }.flatten << 'test/unit'
+        tests.map! {|f| %Q(require "#{f}")}
+        "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
+      end)
+    end
+  
+    task :default => :test
+    
   end
-
 end
 
 class ::Rake::SshDirPublisher # :nodoc:
