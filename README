@@ -10,7 +10,7 @@ Copyright 2007 Cloudburst, LLC. See included LICENSE file. Portions copyright 20
 == Features
 
 * simple configuration
-* comprehensive gem deployment features
+* comprehensive gem deployment
 * automatic changeset parsing
 * documentation upload to any host
 
