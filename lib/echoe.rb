@@ -92,7 +92,7 @@ class Echoe
     # Defaults
 
     self.name = name
-    self.rubyforge_name = name.downcase
+    self.project = name.downcase
     self.url = ""
     self.author = ""
     self.email = ""
