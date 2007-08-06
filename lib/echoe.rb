@@ -156,6 +156,9 @@ class Echoe
 
       dependencies.each do |dep|
         dep = dep.split(" ") if dep.is_a? String
+        dep = [dep.first, dep[1..-1].join(" ")].reject do |s| 
+          s.strip.empty?
+        end
         s.add_dependency(*dep)
       end
 
