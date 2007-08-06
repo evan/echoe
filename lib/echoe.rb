@@ -149,7 +149,7 @@ class Echoe
       s.author = Array(author).join(", ")
       s.email = email
       s.homepage = url
-      s.rubyforge_project = rubyforge_name
+      s.rubyforge_project = project
       s.post_install_message = install_message if install_message
 
       s.description = description
@@ -228,7 +228,7 @@ class Echoe
         self.version = self.version.ljust(3)
   
         begin
-          rf.add_release rubyforge_name, name, version, *files
+          rf.add_release project, name, version, *files
         rescue NoMethodError
         end
       end
@@ -262,15 +262,15 @@ class Echoe
     task :publish_docs => [:clean, :docs] do
 
       local_dir = 'doc'
-      remote_dir_name = rubyforge_name
-      remote_dir_name += "/#{name}" if rubyforge_name != name
+      remote_dir_name = project
+      remote_dir_name += "/#{name}" if project != name
 
       unless docs_host  
         config = YAML.load(File.read(File.expand_path("~/.rubyforge/user-config.yml")))
         pub = Rake::SshDirPublisher.new "#{config["username"]}@rubyforge.org", 
           "/var/www/gforge-projects/#{remote_dir_name}", 
           local_dir
-        if rubyforge_name != name then
+        if project != name then
           def pub.upload
             begin
               super
@@ -320,6 +320,7 @@ class Echoe
   
     ### Tests
   
+    # XXX unreadable
     desc 'Run the test suite'
     task :test do
       ruby(if File.exist? 'test/test_all.rb'
