@@ -302,6 +302,8 @@ class Echoe
       puts files
     end
   end
+  
+  task :manifest => [:build_manifest]
 
   def run_tests # :nodoc:
     ruby(if File.exist? 'test/test_all.rb'
