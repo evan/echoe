@@ -9,13 +9,9 @@ class TestEchoe < Test::Unit::TestCase
     Rake.application.clear
   end
 
-  ##
-  # Yes, these tests suck, but it is damn hard to test this since
-  # everything is forked out.
-
   def test_basics
-    boring   = %w(clobber clobber_docs clobber_package doc doc/index.html pkg pkg/blah-1.0.0 pkg/blah-1.0.0.gem pkg/blah-1.0.0.tgz redocs repackage)
-    expected = %w(audit announce check_manifest clean debug_gem default docs email gem install install_gem multi package post_news publish_docs release ridocs test test_deps uninstall)
+    boring = %w(clobber clobber_docs clobber_package doc doc/index.html pkg pkg/blah-1.0.0 pkg/blah-1.0.0.gem pkg/blah-1.0.0.tgz redocs repackage)
+    expected = %w(manifest clean debug_gem default docs email gem install install_gem multi package post_news publish_docs release ridocs test test_deps uninstall)
     expected += boring
 
     Echoe.new('blah', '1.0.0')
