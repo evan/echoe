@@ -133,7 +133,7 @@ class Echoe
     
     # legacy compatibility
     self.dependencies = extra_deps if extra_deps and dependencies.empty?
-    self.project = rubyforge_name if rubyforge_name and project.empty?
+    self.project = rubyforge_name if rubyforge_name
 
     define_tasks
   end
