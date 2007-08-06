@@ -307,7 +307,7 @@ class Echoe
       files = []
       Find.find '.' do |file|
         file = file[2..-1]
-        unless !file or file =~ /^(pkg|doc)|\.svn|CVS|\.bzr/ or File.directory? file
+        unless !file or file =~ /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS/ or File.directory? file
           files << file
         end
       end
