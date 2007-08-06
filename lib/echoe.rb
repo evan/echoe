@@ -110,7 +110,7 @@ class Echoe
         
     self.description = ""
     self.summary = ""
-    self.rdoc_pattern = /^(lib|bin|tasks)|README|CHANGELOG|LICENSE|txt$/
+    self.rdoc_pattern = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE$/
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.extra_deps = []
     self.manifest_name = "Manifest"

@@ -1,12 +1,14 @@
 
-v2. support documentation hosts other than rubyforge, switch to Snax-style gem versioning; auto-load CHANGELOG contents; remove bin/echoe which doesn't work anyway
+v2.1 Adjust default RDoc include pattern.
 
-v1.4. auto-detect readme file; make rdoc default pattern compatible with manifest generator; fix publish_docs task
+v2. Support documentation hosts other than rubyforge; switch to Snax-style gem versioning; auto-load CHANGELOG contents; remove bin/echoe which doesn't work anyway. Incompatible changes.
 
-v1.3. avoid rubyforge gem multi-activation conflict
+v1.4. Auto-detect readme file; make rdoc default pattern compatible with manifest generator; fix publish_docs task.
 
-v1.2. build_manifest Rake task
+v1.3. Avoid rubyforge gem multi-activation conflict.
 
-v1.1. sane error messages on releasing new or duplicate gems; allow Manifest to not end in .txt
+v1.2. build_manifest Rake task.
 
-v1.0.0. fork from Hoe
+v1.1. Sane error messages on releasing new or duplicate gems; allow Manifest to not end in .txt.
+
+v1.0.0. Fork from Hoe.
