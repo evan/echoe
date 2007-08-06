@@ -120,6 +120,9 @@ class Echoe
     self.need_zip = false
 
     yield self if block_given?
+    
+    self.description = self.summary if self.description.empty?
+    self.summary = self.description if self.summary.empty?      
 
     define_tasks
   end
