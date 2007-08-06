@@ -1,7 +1,5 @@
 
-v2.2 Extra_deps now dependencies; rubyforge_name now project; support install messages.
-
-v2.1 Adjust default RDoc include pattern.
+v2.1. Adjust default RDoc include pattern; extra_deps now dependencies; rubyforge_name now project; support install messages; manifest instead of build_manifest.
 
 v2. Support documentation hosts other than rubyforge; switch to Snax-style gem versioning; auto-load CHANGELOG contents; remove bin/echoe which doesn't work anyway. Incompatible changes.
 
