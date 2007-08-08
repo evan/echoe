@@ -46,8 +46,9 @@ Packaging options:
 
 * <tt>dependencies</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
 * <tt>manifest_name</tt> - The name of the manifest file (defaults to <tt>Manifest</tt>).
-* <tt>need_tar</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
+* <tt>need_gem</tt> - Whether to generate a gem package (default <tt>true</tt>).
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
+* <tt>need_tar</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
 * <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
 
 Publishing options:
@@ -80,7 +81,7 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tar, :need_tar_gz, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tar, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name
@@ -121,8 +122,9 @@ class Echoe
     self.dependencies = []
     self.manifest_name = "Manifest"
 
-    self.need_tar = false    
+    self.need_gem = true
     self.need_tar_gz = true
+    self.need_tar = false    
     self.need_zip = false
 
     yield self if block_given?
@@ -221,8 +223,8 @@ class Echoe
   
         files = [(@need_tar ? pkg_tar : nil),
                   (@need_tar_gz ? pkg_tar_gz : nil),
-                 (@need_zip ? pkg_zip : nil),
-                 pkg_gem].compact
+                  (@need_zip ? pkg_zip : nil),
+                  (@need_gem ? pkg_gem : nil)].compact
   
         puts "Releasing #{name} v. #{version}"
         self.version = self.version.ljust(3)
