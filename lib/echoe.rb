@@ -8,7 +8,7 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rbconfig'
 require 'highline/import'
-gem 'rubyforge', '>= 0.4.0'
+gem 'rubyforge', '>=0.4.0'
 require 'rubyforge'
 
 =begin rdoc
@@ -23,7 +23,7 @@ For example, Echoe's own <tt>Rakefile</tt> looks like this:
     p.summary = 'A tool for packaging Ruby gems.'
     p.url = 'http://blog.evanweaver.com/pages/code#echoe'
     p.docs_host = 'blog.evanweaver.com:~/www/snax/public/files/doc/'
-    p.dependencies = ['rake', 'rubyforge >= 0.4.0', 'highline']
+    p.dependencies = ['rake', 'rubyforge >=0.4.3', 'highline']
   end
 
 == Accessor options
@@ -236,11 +236,8 @@ class Echoe
   
         puts "Releasing #{name} v. #{version}"
         self.version = self.version.ljust(3)
-  
-        begin
-          rf.add_release project, name, version, *files
-        rescue NoMethodError
-        end
+          
+        rf.add_release project, name, version, *files
       end
       
     end
