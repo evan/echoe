@@ -1,5 +1,5 @@
 
-v2.2. Need_gem option.
+v2.2. Need_gem option; announce task.
 
 v2.1. Adjust default RDoc include pattern; extra_deps now dependencies; rubyforge_name now project; support install messages; manifest instead of build_manifest.
 

@@ -7,6 +7,7 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rbconfig'
+require 'open-uri'
 require 'highline/import'
 gem 'rubyforge', '>=0.4.0'
 require 'rubyforge'
@@ -54,7 +55,8 @@ Packaging options:
 Publishing options:
 
 * <tt>project</tt> - The name of the Rubyforge project to upload to (defaults to the name of the gem).
-* <tt>docs_host</tt> - A host and path to publish the documentation to (defaults to the Rubyforge project).
+* <tt>docs_host</tt> - A host and filesystem path to publish the documentation to (defaults to the Rubyforge project).
+* <tt>announce</tt> - Generate a release announcement, edit it, and post it to Rubyforge.
 
 Documentation options:
 
@@ -242,7 +244,7 @@ class Echoe
       
     end
     
-    ### RDoc
+    ### Documentation
 
     Rake::RDocTask.new(:docs) do |rd|      
       rd.main = Dir['*'].detect {|f| f =~ /^readme/i}
@@ -296,6 +298,39 @@ class Echoe
         sh("scp -qr #{local_dir} #{host}:#{dir}/#{remote_dir_name}")
       end      
     end
+        
+    desc 'Generate a release announcement, edit it, and post it to Rubyforge.'
+    task :announce do
+      
+      filename = "/tmp/#{name}_#{version}_announcement.txt"
+      
+      if !File.exist?(filename) or agree "Overwrite existing announcement file? "        
+        File.open(filename, 'w') do |f|
+          f.write "Subject: #{name.capitalize} #{version}\n\n"
+          f.write "#{name.capitalize} has been updated to #{version}. #{name.capitalize} is #{summary.uncapitalize}\n\n"
+          f.write "Changes in this version: #{changes.sub(/^\s*[\w\d\.]+\s+/, '').uncapitalize}\n\n" unless changes.empty?
+          f.write "More information is available at #{url}\n\n" unless url.empty?
+        end
+      end
+      
+      begin        
+        system("nano #{filename}") or raise "Editor returned an error"
+        puts File.open(filename).read
+      end while !agree "Done editing? "
+      
+      if agree "Publish announcement to Rubyforge? "
+        File.open(filename).readlines.detect { |line| line =~ /Subject: (.*)/ }
+        subject = $1 or raise "Subject line seems to have disappeared"
+        
+        body = File.open(filename).readlines.reject { |line| line =~ /Subject: / }.join.gsub("\n\n\n", "\n\n")
+        
+        rf = RubyForge.new
+        rf.login
+        rf.post_news(project, subject, body)
+        puts "Published."
+        File.delete filename
+      end
+    end    
     
     ### Clean
 
@@ -347,3 +382,10 @@ end
 class ::Rake::SshDirPublisher # :nodoc:
   attr_reader :host, :remote_dir, :local_dir
 end
+
+class String #:nodoc:
+  def uncapitalize #:nodoc:
+    "#{self[0..0].downcase}#{self[1..-1]}"
+  end
+end
+
