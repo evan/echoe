@@ -51,6 +51,7 @@ Packaging options:
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
 * <tt>need_tar</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
 * <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
+* <tt>extensions</tt> - Any extension files that need to be executed (defaults to "ext/extconf.rb" if it exists).
 
 Publishing options:
 
@@ -83,10 +84,10 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tar, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tar, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions
   
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc
   
   # legacy
   attr_accessor :extra_deps
@@ -119,10 +120,12 @@ class Echoe
     self.description = ""
     self.summary = ""
     self.install_message = nil
+    self.has_rdoc = true
     self.rdoc_pattern = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE$/
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
     self.manifest_name = "Manifest"
+    self.extensions = ["ext/extconf.rb"] if File.exist?("ext/extconf.rb")
 
     self.need_gem = true
     self.need_tar_gz = true
@@ -172,8 +175,9 @@ class Echoe
 
       s.bindir = "bin"
       dirs = Dir['{lib,ext}']
+      s.extensions = Array(extensions) if extensions
       s.require_paths = dirs unless dirs.empty?
-      s.has_rdoc = true
+      s.has_rdoc = has_rdoc
 
       if File.exist? "test/test_all.rb"
         s.test_file = "test/test_all.rb"
