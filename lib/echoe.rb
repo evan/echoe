@@ -190,6 +190,14 @@ class Echoe
       pkg.need_tar_gz = @need_tar_gz
       pkg.need_zip = @need_zip
     end
+    
+    task :package do
+      # remove the gemfile if it wasn't actually requested
+      unless @need_gem
+        puts "  Gem file not requested. Removed."
+        system "rm pkg/*.gem"
+      end
+    end      
 
     desc 'Install the gem'
     task :install => [:clean, :package] do
