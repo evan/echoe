@@ -52,6 +52,8 @@ Packaging options:
 * <tt>need_tar</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
 * <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
 * <tt>extensions</tt> - Any extension files that need to be executed (defaults to "ext/extconf.rb" if it exists).
+* <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default true. This avoids the metadependency on Echoe itself. 
+* <tt>include_rakefile</tt> - Include the Rakefile file within the package. Default false.
 
 Publishing options:
 
@@ -87,7 +89,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tar, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions
   
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile
   
   # legacy
   attr_accessor :extra_deps
@@ -131,6 +133,8 @@ class Echoe
     self.need_tar_gz = true
     self.need_tar = false    
     self.need_zip = false
+    self.include_gemspec = true
+    self.include_rakefile = false
 
     yield self if block_given?
     
@@ -203,7 +207,7 @@ class Echoe
         puts "  Gem file not requested. Removed."
         system "rm pkg/*.gem"
       end
-    end      
+    end  
 
     desc 'Install the gem'
     task :install => [:clean, :package] do
@@ -353,8 +357,12 @@ class Echoe
       files = []
       Find.find '.' do |file|
         file = file[2..-1]
-        unless !file or file =~ /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS/ or File.directory? file
-          files << file
+        unless !file or 
+          file =~ /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS/ or 
+          File.directory? file or
+          !include_gemspec and file == "gemspec" or
+          !include_rakefile and file == "Rakefile" || file == manifest_name
+            files << file
         end
       end
       files = (files << manifest_name).uniq

@@ -1,9 +1,11 @@
 
+v2.3. Work around metadependencies issue by including gemspecs instead of Rakefiles by default; include_gemspec and include_rakefile accessors.
+
 v2.2. Need_gem option; announce task.
 
 v2.1. Adjust default RDoc include pattern; extra_deps now dependencies; rubyforge_name now project; support install messages; manifest instead of build_manifest.
 
-v2. Support documentation hosts other than rubyforge; switch to Snax-style gem versioning; auto-load CHANGELOG contents; remove bin/echoe which doesn't work anyway. Incompatible changes.
+v2. Support documentation hosts other than rubyforge; auto-load CHANGELOG contents; remove bin/echoe which doesn't work anyway. Incompatible changes.
 
 v1.4. Auto-detect readme file; make rdoc default pattern compatible with manifest generator; fix publish_docs task.
 
