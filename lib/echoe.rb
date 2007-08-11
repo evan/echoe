@@ -16,15 +16,14 @@ require 'rubyforge'
 
 Echoe includes some optional accessors for more advanced gem configuration.
 
-For example, Echoe's own <tt>Rakefile</tt> looks like this:
+For example, a simple <tt>Rakefile</tt> might look like this:
 
-  Echoe.new('echoe') do |p|
-    p.project = 'fauna'
-    p.author = 'Evan Weaver'
-    p.summary = 'A tool for packaging Ruby gems.'
-    p.url = 'http://blog.evanweaver.com/pages/code#echoe'
-    p.docs_host = 'blog.evanweaver.com:~/www/snax/public/files/doc/'
-    p.dependencies = ['rake', 'rubyforge >=0.4.3', 'highline']
+  Echoe.new("uncapitalizer") do |p|
+    p.author = "Evan Weaver"
+    p.summary = "A library that uncapitalizes strings. It's awesome."
+    p.url = "http://www.uncapitalizer.com"
+    p.docs_host = "uncapitalizer.com:~/www/files/doc/"
+    p.dependencies = ["string_tools >=1.4.0"]
   end
   
 == Metadependencies
