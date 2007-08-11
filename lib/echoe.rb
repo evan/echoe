@@ -56,10 +56,10 @@ Packaging options:
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
 * <tt>need_tar</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
 * <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
-* <tt>extensions</tt> - Any extension files that need to be executed (defaults to "ext/extconf.rb" if it exists).
-* <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default true. This avoids the metadependency on Echoe itself. 
-* <tt>include_rakefile</tt> - Include the Rakefile within the package. Default false.
-* <tt>include_manifest</tt> - Include the Manifest within the package. Default false.
+* <tt>extensions</tt> - Any extension files that need to be executed (defaults to <tt>"ext/extconf.rb"</tt> if it exists).
+* <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default <tt>true</tt>. This avoids the metadependency on Echoe itself. 
+* <tt>include_rakefile</tt> - Include the Rakefile within the package. Default <tt>false</tt>.
+* <tt>include_manifest</tt> - Include the Manifest within the package. Default <tt>false</tt>.
 
 Publishing options:
 
