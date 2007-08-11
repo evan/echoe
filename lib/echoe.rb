@@ -26,6 +26,12 @@ For example, Echoe's own <tt>Rakefile</tt> looks like this:
     p.docs_host = 'blog.evanweaver.com:~/www/snax/public/files/doc/'
     p.dependencies = ['rake', 'rubyforge >=0.4.3', 'highline']
   end
+  
+== Metadependencies
+
+Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that, along with a comment containing the original <tt>Rakefile</tt> source. This way no metadependencies are added, but no metacontents are lost.
+
+If you do want metadependencies, add <tt>'echoe'</tt> to the <tt>p.dependencies</tt> array, and set <tt>p.include_rakefile = true</tt>, <tt>p.include_manifest = true</tt>, and <tt>p.include_gemspec = false</tt>.
 
 == Accessor options
 
