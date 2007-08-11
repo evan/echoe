@@ -28,7 +28,7 @@ For example, a simple <tt>Rakefile</tt> might look like this:
   
 == Metadependencies
 
-Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that, along with a comment containing the original <tt>Rakefile</tt> source. This way no metadependencies are added, but no metacontents are lost.
+Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that, along with a comment containing the original <tt>Rakefile</tt> source. Downstream repackagers can use the <tt>gemspec</tt> as-is to build new versions of your gem. This way no dependencies are added, but no contents are lost.
 
 If you do want metadependencies, add <tt>'echoe'</tt> to the <tt>p.dependencies</tt> array, and set <tt>p.include_rakefile = true</tt>, <tt>p.include_manifest = true</tt>, and <tt>p.include_gemspec = false</tt>.
 

@@ -5,7 +5,7 @@ Echoe is a simple tool for working with Rubygems. It generates Rake tasks for do
 
 == License
 
-Copyright 2007 Cloudburst, LLC. See included LICENSE file. Portions copyright 2006 Ryan Davis, Zen Spider Software, and used with permission. See included MIT-LICENSE file.
+Copyright 2007 Cloudburst, LLC. See the included LICENSE file. Portions copyright 2006 Ryan Davis/Zen Spider Software and used with permission. See the included MIT-LICENSE file.
 
 == Features
 
