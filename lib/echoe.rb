@@ -353,7 +353,7 @@ class Echoe
           f.write "Subject: #{name.capitalize} #{version}\n\n"
           f.write "#{name.capitalize} has been updated to #{version}. #{name.capitalize} is #{summary.uncapitalize}\n\n"
           f.write "Changes in this version: #{changes.sub(/^\s*[\w\d\.]+\s+/, '').uncapitalize}\n\n" unless changes.empty?
-          f.write "More information is available at #{url}\n\n" unless url.empty?
+          f.write "More information is available at #{url} .\n\n" unless url.empty?
         end
       end
       
