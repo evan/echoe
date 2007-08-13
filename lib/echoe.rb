@@ -30,7 +30,7 @@ For example, a simple <tt>Rakefile</tt> might look like this:
 
 Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that, along with a comment containing the original <tt>Rakefile</tt> source. Downstream repackagers can use the <tt>gemspec</tt> as-is to build new versions of your gem. This way no dependencies are added, but no contents are lost.
 
-If you do want metadependencies, add <tt>'echoe'</tt> to the <tt>p.dependencies</tt> array, and set <tt>p.include_rakefile = true</tt>, <tt>p.include_manifest = true</tt>, and <tt>p.include_gemspec = false</tt>.
+If you do want metadependencies, add <tt>'echoe'</tt> to the <tt>p.dependencies</tt> array, and set <tt>p.include_rakefile = true</tt> and <tt>p.include_gemspec = false</tt>.
 
 == Accessor options
 
@@ -59,7 +59,6 @@ Packaging options:
 * <tt>extensions</tt> - Any extension files that need to be executed (defaults to <tt>"ext/extconf.rb"</tt> if it exists).
 * <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default <tt>true</tt>.
 * <tt>include_rakefile</tt> - Include the Rakefile within the package. Default <tt>false</tt>.
-* <tt>include_manifest</tt> - Include the Manifest within the package. Default <tt>false</tt>.
 
 Publishing options:
 
@@ -95,7 +94,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tar, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions
   
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :include_manifest, :gemspec_name
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name
   
   # legacy
   attr_accessor :extra_deps
@@ -141,7 +140,6 @@ class Echoe
     self.need_zip = false
 
     self.include_rakefile = false
-    self.include_manifest = false
     self.include_gemspec = true    
     self.gemspec_name = "#{name}.gemspec"
 
@@ -183,7 +181,6 @@ class Echoe
         s.files = File.read(manifest_name).split
         s.files += [gemspec_name] if include_gemspec
         s.files += ["Rakefile"] if include_rakefile
-        s.files += [manifest_name] if include_manifest
         s.files.uniq! # not really necessary
       rescue Errno::ENOENT
         puts "Missing manifest. You can build one with 'rake manifest'."
@@ -397,12 +394,11 @@ class Echoe
         next if file =~ /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS/
         next if File.directory?(file)
         next if !include_rakefile and file == "Rakefile"
-        next if !include_manifest and file == manifest_name
         files << file
       end
 
       files << "Rakefile" if include_rakefile
-      files << manifest_name if include_manifest
+      files << manifest_name
       files.uniq!
       
       File.open(manifest_name, 'w').puts(files)
