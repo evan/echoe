@@ -54,7 +54,7 @@ Packaging options:
 * <tt>manifest_name</tt> - The name of the manifest file (defaults to <tt>Manifest</tt>).
 * <tt>need_gem</tt> - Whether to generate a gem package (default <tt>true</tt>).
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
-* <tt>need_tar</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
+* <tt>need_tgz</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
 * <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
 * <tt>extensions</tt> - Any extension files that need to be executed (defaults to <tt>"ext/extconf.rb"</tt> if it exists).
 * <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default <tt>true</tt>.
@@ -91,7 +91,7 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tar, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name
@@ -136,7 +136,7 @@ class Echoe
 
     self.need_gem = true
     self.need_tar_gz = true
-    self.need_tar = false    
+    self.need_tgz = false    
     self.need_zip = false
 
     self.include_rakefile = false
@@ -206,7 +206,7 @@ class Echoe
     self.test_files = spec.files.grep(/^test/)
 
     Rake::GemPackageTask.new(spec) do |pkg|
-      pkg.need_tar = @need_tar
+      pkg.need_tar = @need_tgz
       pkg.need_tar_gz = @need_tar_gz
       pkg.need_zip = @need_zip
     end
@@ -272,7 +272,7 @@ class Echoe
         c["release_changes"] = changes if changes
         c["preformatted"] = false
   
-        files = [(@need_tar ? pkg_tar : nil),
+        files = [(@need_tgz ? pkg_tar : nil),
                   (@need_tar_gz ? pkg_tar_gz : nil),
                   (@need_zip ? pkg_zip : nil),
                   (@need_gem ? pkg_gem : nil)].compact
