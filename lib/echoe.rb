@@ -64,7 +64,6 @@ Publishing options:
 
 * <tt>project</tt> - The name of the Rubyforge project to upload to (defaults to the name of the gem).
 * <tt>docs_host</tt> - A host and filesystem path to publish the documentation to (defaults to the Rubyforge project).
-* <tt>announce</tt> - Generate a release announcement, edit it, and post it to Rubyforge.
 
 Documentation options:
 
