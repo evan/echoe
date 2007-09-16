@@ -84,7 +84,7 @@ Security options:
 
 * <tt>private_key</tt> - The path to your gem private key. Defaults to ENV['GEM_PRIVATE_KEY'], if available. This accessor is not published in the resulting gemspec.
 * <tt>certificate_chain</tt> - An array representing your certificate authorization chain. If no one else has signed your certificate, just set it to your own cert. Defaults to ENV['GEM_CERTIFICATE_CHAIN'], if available. This accessor is not published in the resulting gemspec.
-* <tt>require_signed</tt> - Force Echoe to refuse to package your gem if it's not properly signed. Defaults to false.
+* <tt>require_signed</tt> - Force Echoe to refuse to package your gem if it's not properly signed. Default false.
 
 Publishing options:
 
