@@ -31,22 +31,20 @@ For example, a simple <tt>Rakefile</tt> might look like this:
 Echoe supports signing gems. First, create yourself a public and private key:
   gem cert --build you@yourmail.com
 
-Move them somewhere secretive. Now, add the following environment variables in your <tt>.bash_profile</tt> or similar:
+Move them somewhere secret, and add the following environment variables in your <tt>.bash_profile</tt> or similar:
   export GEM_PRIVATE_KEY='/secret/path/to/gem-private_key.pem'
   export GEM_CERTIFICATE_CHAIN='/secret/path/to/gem-public_cert.pem'
 
 Make sure your environment is up-to-date:
   source ~/.bash_profile
 
-You can also set them in the Rakefile itself, but using the ENV variables keeps them out of your source control repository. The less is known about your keys (including their path), the better. For ultimate security, keep them on a USB key and only insert it when you need to package a gem.
-
-Package and release your project as normal. Finally, upload your <tt>public_cert.pem</tt> file to your website or Rubyforge project, and tell people to add that certificate to their system via:
+Package and release your project as normal. Finally, upload your <tt>public_cert.pem</tt> file to your website or Rubyforge project, and tell your users to add that certificate to their system via:
   gem cert --add /path/to/public_cert.pem
   
-Now they can install your gem via:
+Now users can install your gem via:
   sudo gem install gemname -P HighSecurity
 
-Note that you can add <tt>p.require_signed = true</tt> to your <tt>Rakefile</tt> so that you don't accidentally release an unsigned gem if your key is missing.
+Note that you can also set the key and certificate locations in the Rakefile itself. Finally, you can add <tt>p.require_signed = true</tt> to your <tt>Rakefile</tt> so that you don't accidentally release an unsigned gem if your key is missing.
   
 == Metadependencies
 
