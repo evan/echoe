@@ -1,4 +1,6 @@
 
+v2.4. Sign gems automatically if ENV['GEM_PRIVATE_KEY'] is present; add certificate_chain and private_key accessors.
+
 v2.3. Work around metadependencies issue by including gemspecs instead of Rakefiles by default; include_gemspec and include_rakefile accessors.
 
 v2.2. Need_gem option; announce task.
