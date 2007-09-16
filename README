@@ -11,6 +11,7 @@ Copyright 2007 Cloudburst, LLC. See the included LICENSE file. Portions copyrigh
 
 * simple configuration
 * comprehensive gem deployment
+* signing support
 * automatic changeset parsing
 * documentation upload to any host
 
