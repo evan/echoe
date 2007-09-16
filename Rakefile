@@ -8,7 +8,7 @@ Echoe.new('echoe') do |p|
   p.url = 'http://blog.evanweaver.com/pages/code#echoe'
   p.docs_host = 'blog.evanweaver.com:~/www/bax/public/files/doc/'
   p.dependencies = ['rake', 'rubyforge >=0.4.3', 'highline']
-  p.require_signed = false
+  p.require_signed = true
 
   # Echoe is self-dependent
   p.include_gemspec = false
