@@ -119,7 +119,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed
   
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval
   
   # legacy
   attr_accessor :extra_deps, :rdoc_pattern
@@ -242,6 +242,11 @@ class Echoe
       else
         s.test_files = Dir[*test_pattern]
       end
+      
+      if eval
+        self.instance_eval &eval
+      end
+      
     end
 
     self.lib_files = spec.files.grep(/^lib/)

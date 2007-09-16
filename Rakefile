@@ -12,6 +12,6 @@ Echoe.new('echoe') do |p|
 
   # Echoe is self-dependent
   p.include_gemspec = false
-  p.include_rakefile = true  
+  p.include_rakefile = true    
 end
 
