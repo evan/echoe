@@ -93,7 +93,7 @@ Publishing options:
 
 Documentation options:
 
-* <tt>rdoc_pattern</tt> - A regex for filenames that should be passed to RDoc.
+* <tt>rdoc_files</tt> - An array or regex for filenames that should be passed to RDoc.
 * <tt>rdoc_template</tt> - A path to an RDoc template (defaults to the generic template).
 
 =end
@@ -116,13 +116,13 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name
   
   # legacy
-  attr_accessor :extra_deps
+  attr_accessor :extra_deps, :rdoc_pattern
   
   def initialize(name, version = nil)
     # Defaults
@@ -153,7 +153,7 @@ class Echoe
     self.summary = ""
     self.install_message = nil
     self.has_rdoc = true
-    self.rdoc_pattern = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE$/
+    self.rdoc_files = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE$/
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
     self.manifest_name = "Manifest"
@@ -181,6 +181,7 @@ class Echoe
     # legacy compatibility
     self.dependencies = extra_deps if extra_deps and dependencies.empty?
     self.project = rubyforge_name if rubyforge_name
+    self.rdoc_files = rdoc_pattern if rdoc_pattern
 
     define_tasks
   end
@@ -338,8 +339,15 @@ class Echoe
       rd.options += Array(rdoc_options)
       
       rd.rdoc_dir = 'doc'
-
-      files = (spec.files.grep(rdoc_pattern) - [manifest_name]).uniq
+      
+      files = (if rdoc_files.is_a? Array
+        rdoc_files
+      elsif rdoc_pattern.is_a? Regexp
+        spec.files.grep(rdoc_pattern).uniq
+      else
+        []
+      end) - [manifest_name]
+      
       rd.rdoc_files.push(*files)
 
       if rdoc_template
