@@ -38,10 +38,10 @@ Move them somewhere secret, and add the following environment variables in your 
 Make sure your environment is up-to-date:
   source ~/.bash_profile
 
-Package and release your project as normal. Finally, upload your <tt>public_cert.pem</tt> file to your website or Rubyforge project, and tell your users to add that certificate to their system via:
+Upload your <tt>public_cert.pem</tt> file to your website or Rubyforge project, and tell your users to add that certificate to their system via:
   gem cert --add /path/to/public_cert.pem
   
-Now users can install your gem via:
+Finally, package and release your project as normal. Now users can install your gem via:
   sudo gem install gemname -P HighSecurity
 
 Note that you can also set the key and certificate locations in the Rakefile itself. Finally, you can add <tt>p.require_signed = true</tt> to your <tt>Rakefile</tt> so that you don't accidentally release an unsigned gem if your key is missing.
@@ -290,7 +290,7 @@ class Echoe
 
     desc 'Install the gem'
     task :install => [:clean, :package] do
-      sh "sudo gem install pkg/*.gem"
+      sh "sudo gem install pkg/*.gem -P MediumSecurity"
     end
 
     desc 'Uninstall the gem'
