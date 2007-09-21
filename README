@@ -28,12 +28,12 @@ The public certificate for this gem is at http://rubyforge.org/frs/download.php/
 Organize your gem according to the usual structure:
 
   lib/
-  bin/  
-  ext/
   README
   LICENSE
   CHANGELOG
   Rakefile
+
+You can add the <tt>bin/</tt> or <tt>ext/</tt> folders if you have executables or extensions, respectively.
 
 Your <tt>CHANGELOG</tt> should be formatted as follows (including newlines):
 
