@@ -1,9 +1,9 @@
-test/test_echoe.rb
-lib/echoe.rb
 TODO
-Rakefile
+test/test_echoe.rb
 README
-Manifest
+Rakefile
 MIT-LICENSE
 LICENSE
+lib/echoe.rb
 CHANGELOG
+Manifest

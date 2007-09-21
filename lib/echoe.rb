@@ -226,8 +226,10 @@ class Echoe
         s.files += ["Rakefile"] if include_rakefile
         s.files.uniq! # not really necessary
       rescue Errno::ENOENT
-        puts "Missing manifest. You can build one with 'rake manifest'."
-        exit
+        unless ARGV.include? "manifest"
+          puts "Missing manifest. You can build one with 'rake manifest'."
+          exit 
+        end
       end
       s.executables = s.files.grep(/bin/) { |f| File.basename(f) }
 
