@@ -308,12 +308,12 @@ class Echoe
 
     desc 'Install the gem'
     task :install => [:clean, :package] do
-      sh "sudo gem install pkg/*.gem -P MediumSecurity"
+      system "sudo gem install pkg/*.gem -P MediumSecurity"
     end
 
     desc 'Uninstall the gem'
     task :uninstall do
-      sh "sudo gem uninstall #{name} -a -i -x"
+      system "sudo gem uninstall #{name} -a -i -x"
     end
 
     desc 'Package and upload the release to Rubyforge'
@@ -355,21 +355,23 @@ class Echoe
       directory "lib"
     end
     
-    task :compile => [:lib] do    
-      extensions.each do |extension|
-        directory = File.dirname(extension)
-        Dir.chdir(directory) do 
-          ruby File.basename(extension)
-          sh(PLATFORM =~ /win32/ ? 'nmake' : 'make')
-        end
-        Dir["#{directory}/*.#{Config::CONFIG['DLEXT']}"].each do |file|
-          cp file, "lib"
+    if extensions and extensions.any?
+    
+      task :compile => [:lib] do    
+        extensions.each do |extension|
+          directory = File.dirname(extension)
+          Dir.chdir(directory) do 
+            ruby File.basename(extension)
+            system(PLATFORM =~ /win32/ ? 'nmake' : 'make')
+          end
+          Dir["#{directory}/*.#{Config::CONFIG['DLEXT']}"].each do |file|
+            cp file, "lib"
+          end
         end
       end
-    end
-    
-    if extensions and extensions.any?
+      
       task :test => [:compile]
+      
     end
     
     ### Documentation
@@ -425,7 +427,7 @@ class Echoe
               super
             rescue
               # project directory probably doesn't exist, transfer as a whole
-              sh("scp -qr #{local_dir} #{host}:#{remote_dir}")
+              system("scp -qr #{local_dir} #{host}:#{remote_dir}")
             end
           end
         end
@@ -434,8 +436,8 @@ class Echoe
         # you may need ssh keys configured for this to work
         host, dir = docs_host.split(":")
         dir.chomp!("/")
-        sh("ssh #{host} 'rm -rf #{dir}/#{remote_dir_name}'") # XXX too dangerous?
-        sh("scp -qr #{local_dir} #{host}:#{dir}/#{remote_dir_name}")
+        system("ssh #{host} 'rm -rf #{dir}/#{remote_dir_name}'") # XXX too dangerous?
+        system("scp -qr #{local_dir} #{host}:#{dir}/#{remote_dir_name}")
       end      
     end
         
@@ -476,9 +478,15 @@ class Echoe
 
     desc 'Clean up auto-generated files'
     task :clean do
+      puts "Cleaning"
       clean_pattern.each do |pattern|
         files = Dir[pattern]
-        rm_rf files unless files.empty?
+        files.each do |file|
+          if File.exist?(file)
+            puts "- #{file}"
+            rm_rf file
+          end
+        end
       end
     end
     
