@@ -76,6 +76,7 @@ Common packaging options:
 * <tt>test_pattern</tt> - A filename array, glob array, or regex for test runners. Defaults to <tt>"test/test_all.rb"</tt> if it exists.
 
 Uncommon packaging options:
+* <tt>platform</tt> - What platform this gem is for.
 * <tt>manifest_name</tt> - The name of the manifest file (defaults to <tt>Manifest</tt>).
 * <tt>need_gem</tt> - Whether to generate a gem package (default <tt>true</tt>).
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
@@ -122,7 +123,7 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed, :ruby_version
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval
@@ -209,6 +210,7 @@ class Echoe
       s.post_install_message = install_message if install_message
       s.description = description
       s.required_ruby_version = ruby_version
+      s.platform = platform if platform
 
       if private_key and File.exist? private_key
         s.signing_key = private_key
@@ -246,7 +248,7 @@ class Echoe
       end
       
       if eval
-        self.instance_eval &eval
+        s.instance_eval &eval
       end
       
     end
