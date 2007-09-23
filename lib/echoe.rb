@@ -427,7 +427,9 @@ class Echoe
               super
             rescue
               # project directory probably doesn't exist, transfer as a whole
-              system("scp -qr #{local_dir} #{host}:#{remote_dir}")
+              cmd = "scp -qr #{local_dir} #{host}:#{remote_dir}"
+              puts "Uploading: #{cmd}"
+              system(cmd)
             end
           end
         end
@@ -436,8 +438,15 @@ class Echoe
         # you may need ssh keys configured for this to work
         host, dir = docs_host.split(":")
         dir.chomp!("/")
-        system("ssh #{host} 'rm -rf #{dir}/#{remote_dir_name}'") # XXX too dangerous?
-        system("scp -qr #{local_dir} #{host}:#{dir}/#{remote_dir_name}")
+        
+        # XXX too dangerous?
+        cmd = "ssh #{host} 'rm -rf #{dir}/#{remote_dir_name}'"
+        puts "Deleting existing docs: #{cmd}"
+        system(cmd) 
+        
+        cmd = "scp -qr #{local_dir} #{host}:#{dir}/#{remote_dir_name}"
+        puts "Uploading: #{cmd}"
+        system(cmd)
       end      
     end
         
