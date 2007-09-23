@@ -68,18 +68,22 @@ Versioning options:
 * <tt>version</tt> - A string for the version number. Parsed from CHANGELOG otherwise.
 * <tt>changes</tt> - A string describing the most recent changes. Parsed from CHANGELOG otherwise.
 
-Packaging options:
+Common packaging options:
 
 * <tt>dependencies</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
+* <tt>extensions</tt> - Any extension files that need to be executed (defaults to <tt>"ext/**/extconf.rb"</tt>).
+* <tt>clean_pattern</tt> - A filename array, glob array, or regex for files that should be removed when <tt>rake clean</tt> is run.
+* <tt>test_pattern</tt> - A filename array, glob array, or regex for test runners. Defaults to <tt>"test/test_all.rb"</tt> if it exists.
+
+Uncommon packaging options:
 * <tt>manifest_name</tt> - The name of the manifest file (defaults to <tt>Manifest</tt>).
 * <tt>need_gem</tt> - Whether to generate a gem package (default <tt>true</tt>).
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
 * <tt>need_tgz</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
 * <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
-* <tt>extensions</tt> - Any extension files that need to be executed (defaults to <tt>"ext/extconf.rb"</tt> if it exists).
+* <tt>include_rakefile</tt> - Include the Rakefile directly within the package. Default <tt>false</tt>.
 * <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default <tt>true</tt>.
-* <tt>include_rakefile</tt> - Include the Rakefile within the package. Default <tt>false</tt>.
-* <tt>clean_pattern</tt> - A filename array, glob array, or regex for files that should be removed when <tt>rake clean</tt> is run.
+* <tt>ruby_version</tt> - Version string for which Ruby to require (for example, <tt>'>= 1.8.4'</tt>).
 * <tt>eval</tt> - Accepts a proc to be evaluated in the context of the Gem::Specification object. This allows you to set more unusual gemspec options.
 
 Security options:
@@ -118,7 +122,7 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed, :ruby_version
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval
@@ -204,6 +208,7 @@ class Echoe
       s.rubyforge_project = project
       s.post_install_message = install_message if install_message
       s.description = description
+      s.required_ruby_version = ruby_version
 
       if private_key and File.exist? private_key
         s.signing_key = private_key
