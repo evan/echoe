@@ -155,7 +155,7 @@ class Echoe
     self.summary = ""
     self.install_message = nil
     self.has_rdoc = true
-    self.rdoc_files = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE$/
+    self.rdoc_files = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
     self.manifest_name = "Manifest"
