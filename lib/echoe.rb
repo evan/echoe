@@ -86,6 +86,7 @@ Uncommon packaging options:
 * <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default <tt>true</tt>.
 * <tt>ruby_version</tt> - Version string for which Ruby to require (for example, <tt>'>= 1.8.4'</tt>).
 * <tt>eval</tt> - Accepts a proc to be evaluated in the context of the Gem::Specification object. This allows you to set more unusual gemspec options.
+* <tt>ignore_pattern</tt> - A regex for pathnames that should be ignored when building the manifest.
 
 Security options:
 
@@ -123,7 +124,7 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval
@@ -502,12 +503,13 @@ class Echoe
     ### Manifest
 
     desc "Build a Manifest list"
-    task :manifest do
+    task :manifest => [:clean] do
       files = []
       Find.find '.' do |file|
         file = file[2..-1]
         next unless file
         next if file =~ /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
+        next if file =~ ignore_pattern and ignore_pattern
         next if File.directory?(file)
         next if !include_rakefile and file == "Rakefile"
         files << file
