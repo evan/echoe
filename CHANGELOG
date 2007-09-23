@@ -1,4 +1,6 @@
 
+v2.4.2. Add some extension building tasks.
+
 v2.4.1. Manifest doesn't require itself (willcodeforwork).
 
 v2.4. Sign gems automatically if ENV['GEM_PRIVATE_KEY'] is present; add certificate_chain and private_key accessors.

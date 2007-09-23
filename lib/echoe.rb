@@ -177,6 +177,8 @@ class Echoe
     self.certificate_chain = Array(certificate_chain)
     self.description = summary if description.empty?
     self.summary = description if summary.empty?
+    self.extensions = Array(extensions) if extensions
+    self.clean_pattern = Array(clean_pattern) if clean_pattern
     
     # legacy compatibility
     self.dependencies = extra_deps if extra_deps and dependencies.empty?
@@ -199,21 +201,12 @@ class Echoe
       s.homepage = url
       s.rubyforge_project = project
       s.post_install_message = install_message if install_message
-      
+      s.description = description
+
       if private_key and File.exist? private_key
         s.signing_key = private_key
         s.cert_chain = certificate_chain
-        puts "Signing gem."
-        puts "Certificate chain is:"
-        certificate_chain.each do |cert|
-          puts "  #{cert}"
-        end
-      else
-        puts "Missing private key; gem will not be signed."
-        raise "Signed gem required. Maybe you forget to set ENV['GEM_PRIVATE_KEY']." if require_signed
       end
-
-      s.description = description
 
       dependencies.each do |dep|
         dep = dep.split(" ") if dep.is_a? String
@@ -235,7 +228,7 @@ class Echoe
 
       s.bindir = "bin"
       dirs = Dir['{lib,ext}']
-      s.extensions = Array(extensions) if extensions
+      s.extensions = extensions
       s.require_paths = dirs unless dirs.empty?
       s.has_rdoc = has_rdoc
 
@@ -294,6 +287,14 @@ class Echoe
       if include_gemspec and File.exist? gemspec_name
         File.delete gemspec_name
       end
+      
+      # Test signing status
+      if private_key and File.exist? private_key
+        puts "Signing gem."
+      else
+        raise "Key required, but not found. Maybe you forget to set ENV['GEM_PRIVATE_KEY']?" if require_signed
+        puts "Private key not found; gem will not be signed."
+      end      
     end  
 
     desc 'Install the gem'
@@ -337,6 +338,29 @@ class Echoe
         rf.add_release project, name, version, *files
       end
       
+    end
+    
+    ### Extension building
+
+    task :lib do
+      directory "lib"
+    end
+    
+    task :compile => [:lib] do    
+      extensions.each do |extension|
+        directory = File.dirname(extension)
+        Dir.chdir(directory) do 
+          ruby File.basename(extension)
+          sh(PLATFORM =~ /win32/ ? 'nmake' : 'make')
+        end
+        Dir["#{directory}/*.#{Config::CONFIG['DLEXT']}"].each do |file|
+          cp file, "lib"
+        end
+      end
+    end
+    
+    if extensions and extensions.any?
+      task :test => [:compile]
     end
     
     ### Documentation
@@ -452,7 +476,7 @@ class Echoe
       Find.find '.' do |file|
         file = file[2..-1]
         next unless file
-        next if file =~ /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS/
+        next if file =~ /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
         next if File.directory?(file)
         next if !include_rakefile and file == "Rakefile"
         files << file
