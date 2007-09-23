@@ -79,6 +79,7 @@ Packaging options:
 * <tt>extensions</tt> - Any extension files that need to be executed (defaults to <tt>"ext/extconf.rb"</tt> if it exists).
 * <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default <tt>true</tt>.
 * <tt>include_rakefile</tt> - Include the Rakefile within the package. Default <tt>false</tt>.
+* <tt>eval</tt> - Accepts a proc to be evaluated in the context of the Gem::Specification object. This allows you to set more unusual gemspec options.
 
 Security options:
 
@@ -93,7 +94,7 @@ Publishing options:
 
 Documentation options:
 
-* <tt>rdoc_files</tt> - An array or regex for filenames that should be passed to RDoc.
+* <tt>rdoc_files</tt> - A filename array, glob array, or regex for filenames that should be passed to RDoc. Also can be referred to as <tt>rdoc_pattern</tt>.
 * <tt>rdoc_template</tt> - A path to an RDoc template (defaults to the generic template).
 
 =end
@@ -132,7 +133,7 @@ class Echoe
     self.url = ""
     self.author = ""
     self.email = ""
-    self.clean_pattern = %w(diff diff.txt email.txt ri *.gem **/*~)
+    self.clean_pattern = ["pkg", "doc", "lib/*.#{Config::CONFIG['DLEXT']}", "ext/**/*.#{Config::CONFIG['DLEXT']}", ".config"]
     self.test_pattern = ['test/**/test_*.rb']
     
     self.version = if version
@@ -371,13 +372,18 @@ class Echoe
       
       rd.rdoc_dir = 'doc'
       
-      files = (if rdoc_files.is_a? Array
-        rdoc_files
-      elsif rdoc_pattern.is_a? Regexp
-        spec.files.grep(rdoc_pattern).uniq
-      else
-        []
-      end) - [manifest_name]
+      files = case rdoc_files
+        when Array
+          rdoc_files.map do |pattern|
+            Dir[pattern].select { |file| spec.files.include? file }
+          end.flatten
+        when Regexp
+          spec.files.grep(rdoc_files).uniq
+        else
+          []
+      end
+      
+      files -= [manifest_name]
       
       rd.rdoc_files.push(*files)
 
@@ -460,8 +466,8 @@ class Echoe
     
     ### Clean
 
-    desc 'Delete the generated documentation and packages'
-    task :clean => [ :clobber_docs, :clobber_package ] do
+    desc 'Clean up auto-generated files'
+    task :clean do
       clean_pattern.each do |pattern|
         files = Dir[pattern]
         rm_rf files unless files.empty?

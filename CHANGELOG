@@ -1,5 +1,5 @@
 
-v2.4.2. Add some extension building tasks.
+v2.5. Add some extension building tasks; adjust 'clean' behavior; rdoc inclusions definitely depend on Manifest now.
 
 v2.4.1. Manifest doesn't require itself (willcodeforwork).
 
