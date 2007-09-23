@@ -47,7 +47,6 @@ This way Echoe can parse the latest version and changeset message automatically.
 
 Your <tt>Rakefile</tt> needs the following minimal contents:
 
-  require 'rubygems'
   require 'echoe'  
   Echoe.new('gem_name')
   
