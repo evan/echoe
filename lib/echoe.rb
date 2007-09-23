@@ -71,7 +71,7 @@ Versioning options:
 Common packaging options:
 
 * <tt>dependencies</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
-* <tt>extensions</tt> - Any extension files that need to be executed (defaults to <tt>"ext/**/extconf.rb"</tt>).
+* <tt>extensions</tt> - Any extension files that need to be run at install time (defaults to <tt>"ext/**/extconf.rb"</tt>).
 * <tt>clean_pattern</tt> - A filename array, glob array, or regex for files that should be removed when <tt>rake clean</tt> is run.
 * <tt>test_pattern</tt> - A filename array, glob array, or regex for test runners. Defaults to <tt>"test/test_all.rb"</tt> if it exists.
 
@@ -164,7 +164,7 @@ class Echoe
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
     self.manifest_name = "Manifest"
-    self.extensions = ["ext/extconf.rb"] if File.exist?("ext/extconf.rb")
+    self.extensions = "ext/**/extconf.rb"
     self.private_key = ENV['GEM_PRIVATE_KEY']
     self.require_signed = false
     self.certificate_chain = ENV['GEM_CERTIFICATE_CHAIN'].to_s.split(/\,\s*/).compact
@@ -184,8 +184,8 @@ class Echoe
     self.certificate_chain = Array(certificate_chain)
     self.description = summary if description.empty?
     self.summary = description if summary.empty?
-    self.extensions = Array(extensions) if extensions
     self.clean_pattern = Array(clean_pattern) if clean_pattern
+    self.extensions = Array(extensions).map {|ext| Dir[ext]}.flatten
     
     # legacy compatibility
     self.dependencies = extra_deps if extra_deps and dependencies.empty?
@@ -237,7 +237,7 @@ class Echoe
 
       s.bindir = "bin"
       dirs = Dir['{lib,ext}']
-      s.extensions = extensions
+      s.extensions = extensions if extensions.any?
       s.require_paths = dirs unless dirs.empty?
       s.has_rdoc = has_rdoc
 
@@ -355,7 +355,7 @@ class Echoe
       directory "lib"
     end
     
-    if extensions and extensions.any?
+    if extensions.any?
     
       task :compile => [:lib] do    
         extensions.each do |extension|
