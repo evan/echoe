@@ -27,6 +27,8 @@ For example, a simple <tt>Rakefile</tt> might look like this:
     p.docs_host = "uncapitalizer.com:~/www/files/doc/"
     p.dependencies = ["string_tools >=1.4.0"]
   end
+  
+See below for the full list.
 
 == Signing gems
 
