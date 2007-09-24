@@ -75,7 +75,7 @@ Common packaging options:
 * <tt>dependencies</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
 * <tt>extensions</tt> - Any extension files that need to be run at install time (defaults to <tt>"ext/**/extconf.rb"</tt>).
 * <tt>clean_pattern</tt> - A filename array, glob array, or regex for files that should be removed when <tt>rake clean</tt> is run.
-* <tt>test_pattern</tt> - A filename array, glob array, or regex for test runners. Defaults to <tt>"test/test_all.rb"</tt> if it exists.
+* <tt>test_pattern</tt> - A filename array, glob array, or regex for test runners. Overridden by <tt>"test/test_all.rb"</tt>, if it exists.
 
 Uncommon packaging options:
 * <tt>platform</tt> - What platform this gem is for.
