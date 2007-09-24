@@ -72,24 +72,24 @@ Versioning options:
 
 Common packaging options:
 
-* <tt>dependencies</tt> - An array of dependencies for this gem, in 'gem_name [= version]' format.
-* <tt>extensions</tt> - Any extension files that need to be run at install time (defaults to <tt>"ext/**/extconf.rb"</tt>).
+* <tt>dependencies</tt> - An array of dependencies for this gem. For example, <tt>['mongrel', 'rake >=0.7.1']</tt>.
+* <tt>extension_pattern</tt> - A filename array, glob array, or regex for extension files that need to be run at install time. Defaults to <tt>"ext/**/extconf.rb"</tt>.
 * <tt>clean_pattern</tt> - A filename array, glob array, or regex for files that should be removed when <tt>rake clean</tt> is run.
 * <tt>test_pattern</tt> - A filename array, glob array, or regex for test runners. Overridden by <tt>"test/test_all.rb"</tt>, if it exists.
 
 Uncommon packaging options:
 * <tt>platform</tt> - What platform this gem is for.
-* <tt>manifest_name</tt> - The name of the manifest file (defaults to <tt>Manifest</tt>).
-* <tt>need_gem</tt> - Whether to generate a gem package (default <tt>true</tt>).
-* <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package (default <tt>true</tt>).
-* <tt>need_tgz</tt> - Whether to generate a <tt>.tgz</tt> package (default <tt>false</tt>).
-* <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package (default <tt>false</tt>).
-* <tt>include_rakefile</tt> - Include the Rakefile directly within the package. Default <tt>false</tt>.
-* <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default <tt>true</tt>.
-* <tt>ruby_version</tt> - Version string for which Ruby to require (for example, <tt>'>= 1.8.4'</tt>).
+* <tt>manifest_name</tt> - The name of the manifest file. Defaults to <tt>Manifest</tt>.
+* <tt>need_gem</tt> - Whether to generate a gem package. Defaults to <tt>true</tt>.
+* <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package. Defaults to <tt>true</tt>.
+* <tt>need_tgz</tt> - Whether to generate a <tt>.tgz</tt> package. Defaults to <tt>false</tt>.
+* <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package. Defaults to <tt>false</tt>.
+* <tt>include_rakefile</tt> - Include the Rakefile directly within the package. Defaults to <tt>false</tt>.
+* <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Defaults to <tt>true</tt>.
+* <tt>ruby_version</tt> - Version string for which Ruby to require (for example, <tt>'>= 1.8.4'</tt>.
 * <tt>eval</tt> - Accepts a proc to be evaluated in the context of the Gem::Specification object. This allows you to set more unusual gemspec options.
 * <tt>ignore_pattern</tt> - A filename array, glob array, or regex for pathnames that should be ignored when building the manifest.
-* <tt>bin_pattern</tt> - A filename array, glob array, or regex for files that should be installed as wrapped executables.
+* <tt>executable_pattern</tt> - A filename array, glob array, or regex for files that should be installed as wrapped executables.
 
 Security options:
 
@@ -99,13 +99,13 @@ Security options:
 
 Publishing options:
 
-* <tt>project</tt> - The name of the Rubyforge project to upload to (defaults to the name of the gem).
-* <tt>docs_host</tt> - A host and filesystem path to publish the documentation to (defaults to the Rubyforge project).
+* <tt>project</tt> - The name of the Rubyforge project to upload to. Defaults to the name of the gem.
+* <tt>docs_host</tt> - A host and filesystem path to publish the documentation to. Defaults to the Rubyforge project.
 
 Documentation options:
 
 * <tt>rdoc_pattern</tt> - A filename array, glob array, or regex for filenames that should be passed to RDoc.
-* <tt>rdoc_template</tt> - A path to an RDoc template (defaults to the generic template).
+* <tt>rdoc_template</tt> - A path to an RDoc template. Defaults to the generic template.
 
 =end
 
@@ -127,13 +127,13 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :bin_pattern, :changelog
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files
   
   # legacy
-  attr_accessor :extra_deps, :rdoc_pattern
+  attr_accessor :extra_deps, :rdoc_files, :extensions
   
   def initialize(name, _version = nil)
     # Defaults
@@ -152,11 +152,11 @@ class Echoe
     self.install_message = nil
     self.has_rdoc = true
     self.rdoc_pattern = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
-    self.bin_pattern = /^bin\//
+    self.executable_pattern = /^bin\//
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
     self.manifest_name = "Manifest"
-    self.extensions = "ext/**/extconf.rb"
+    self.extension_pattern = "ext/**/extconf.rb"
     self.private_key = ENV['GEM_PRIVATE_KEY']
     self.require_signed = false
     self.certificate_chain = ENV['GEM_CERTIFICATE_CHAIN'].to_s.split(/\,\s*/).compact
@@ -176,6 +176,7 @@ class Echoe
     self.dependencies = extra_deps if extra_deps and dependencies.empty?
     self.project = rubyforge_name if rubyforge_name
     self.rdoc_pattern = rdoc_files if rdoc_files
+    self.extension_pattern = extensions if extensions
 
     # read manifest
     begin
@@ -214,10 +215,10 @@ class Echoe
     self.description = summary if description.empty?
     self.summary = description if summary.empty?
     self.clean_pattern = apply_pattern(clean_pattern)
-    self.extensions = apply_pattern(extensions, files)
+    self.extension_pattern = apply_pattern(extensions, files)
     self.ignore_pattern = apply_pattern(ignore_pattern)
     self.rdoc_pattern = apply_pattern(rdoc_pattern, files)
-    self.bin_pattern = apply_pattern(bin_pattern, files)
+    self.executable_pattern = apply_pattern(executable_pattern, files)
 
     define_tasks
   end
@@ -266,11 +267,11 @@ class Echoe
       end
 
       s.files = files
-      s.executables = bin_pattern
+      s.executables = executable_pattern
 
       s.bindir = "bin"
       dirs = Dir['{lib,ext}']
-      s.extensions = extensions if extensions.any?
+      s.extensions = extension_pattern if extension_pattern.any?
       s.require_paths = dirs unless dirs.empty?
       s.has_rdoc = has_rdoc
 
@@ -388,10 +389,10 @@ class Echoe
       directory "lib"
     end
     
-    if extensions.any?
+    if extension_pattern.any?
     
       task :compile => [:lib] do    
-        extensions.each do |extension|
+        extension_pattern.each do |extension|
           directory = File.dirname(extension)
           Dir.chdir(directory) do 
             ruby File.basename(extension)
