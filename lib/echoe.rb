@@ -526,6 +526,7 @@ class Echoe
 
     desc "Build a Manifest list"
     task :manifest => [:clean] do
+      puts "Building Manifest"
       files = []
       Find.find '.' do |file|
         file = file[2..-1]
@@ -542,7 +543,7 @@ class Echoe
       files.uniq!
       
       File.open(manifest_name, 'w').puts(files)
-      puts(files)
+      puts(files.map {|f| "+ #{f}"})
     end
     
     task :build_manifest => [:manifest]
