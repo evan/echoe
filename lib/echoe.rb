@@ -158,7 +158,7 @@ class Echoe
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
     self.manifest_name = "Manifest"
-    self.extension_pattern = "ext/**/extconf.rb"
+    self.extension_pattern = ["ext/**/extconf.rb", "ext/extconf.rb"]
     self.private_key = ENV['GEM_PRIVATE_KEY']
     self.require_signed = false
     self.certificate_chain = ENV['GEM_CERTIFICATE_CHAIN'].to_s.split(/\,\s*/).compact
