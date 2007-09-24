@@ -217,7 +217,7 @@ class Echoe
     self.description = summary if description.empty?
     self.summary = description if summary.empty?
     self.clean_pattern = apply_pattern(clean_pattern)
-    self.extension_pattern = apply_pattern(extensions, files)
+    self.extension_pattern = apply_pattern(extension_pattern, files)
     self.ignore_pattern = apply_pattern(ignore_pattern)
     self.rdoc_pattern = apply_pattern(rdoc_pattern, files)
     self.executable_pattern = apply_pattern(executable_pattern, files)
