@@ -132,7 +132,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog
   
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files, :changelog_patterns
   
   # legacy
   attr_accessor :extra_deps, :rdoc_files, :extensions
@@ -147,13 +147,24 @@ class Echoe
     self.author = ""
     self.email = ""
     self.clean_pattern = ["pkg", "doc", 'build/*', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "ext/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "ext/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "lib/*.bundle", "*.gem", ".config"]
-    self.test_pattern = ['test/**/test_*.rb']    
-        
+    self.test_pattern = ['test/**/test_*.rb']
+    
+    self.changelog_patterns = {
+        :version => [
+            /^\s*v([\d\.]+)(\.|\s|$)/, 
+            /\s*\*\s*([\d\.]+)\s*\*\s*$/
+          ],
+        :changes => [
+          /^\s*v([\d\.]+\. .*)/, 
+          /\*\s*[\d\.]+\s*\*\s*(.*)\*\s*[\d\.]+\s*\*$/m
+        ]
+      }
+      
     self.description = ""
     self.summary = ""
     self.install_message = nil
     self.has_rdoc = true
-    self.rdoc_pattern = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
+    self.rdoc_pattern = /^(lib|bin|tasks|ext)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
     self.executable_pattern = /^bin\//
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
@@ -197,16 +208,20 @@ class Echoe
     self.version ||= _version    
     unless version
       if File.exist? changelog
-        parsed = open(changelog).read[/^\s*v([\d\.]+)(\.|\s|$)/, 1].chomp(".").strip
+        parsed = Array(changelog_patterns[:version]).map do |pattern|
+          open(changelog).read[pattern, 1]
+        end.compact.first
         raise "Could not parse version from #{changelog}" unless parsed
-        self.version = parsed
+        self.version = parsed.chomp(".").strip
       else
         raise "No #{changelog} found, and no version supplied in Rakefile."
       end
     end
 
     self.changes = if File.exist? changelog
-      open(changelog).read[/^\s*v([\d\.]+\. .*)/, 1]
+      Array(changelog_patterns[:changes]).map do |pattern|
+        open(changelog).read[pattern, 1]
+      end.compact.first or ""
     else
       ""
     end      
