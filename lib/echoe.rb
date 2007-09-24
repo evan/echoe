@@ -146,7 +146,7 @@ class Echoe
     self.url = ""
     self.author = ""
     self.email = ""
-    self.clean_pattern = ["pkg", "doc", "lib/*.#{Config::CONFIG['DLEXT']}", "ext/**/*.#{Config::CONFIG['DLEXT']}", ".config"]
+    self.clean_pattern = ["pkg", "doc", 'build/*', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "ext/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "ext/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "lib/*.bundle", "*.gem", ".config"]
     self.test_pattern = ['test/**/test_*.rb']    
         
     self.description = ""
@@ -226,7 +226,7 @@ class Echoe
   end
   
   def apply_pattern(pattern, files = nil)
-    files ||= Dir['**']
+    files ||= Dir['**/**']
     case pattern
       when String, Array
         files & (Array(pattern).map do |p|
