@@ -88,7 +88,8 @@ Uncommon packaging options:
 * <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Default <tt>true</tt>.
 * <tt>ruby_version</tt> - Version string for which Ruby to require (for example, <tt>'>= 1.8.4'</tt>).
 * <tt>eval</tt> - Accepts a proc to be evaluated in the context of the Gem::Specification object. This allows you to set more unusual gemspec options.
-* <tt>ignore_pattern</tt> - A regex for pathnames that should be ignored when building the manifest.
+* <tt>ignore_pattern</tt> - A filename array, glob array, or regex for pathnames that should be ignored when building the manifest.
+* <tt>bin_pattern</tt> - A filename array, glob array, or regex for files that should be installed as wrapped executables.
 
 Security options:
 
