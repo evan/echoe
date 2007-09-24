@@ -221,6 +221,7 @@ class Echoe
     self.ignore_pattern = apply_pattern(ignore_pattern)
     self.rdoc_pattern = apply_pattern(rdoc_pattern, files)
     self.executable_pattern = apply_pattern(executable_pattern, files)
+      
 
     define_tasks
   end
@@ -269,9 +270,17 @@ class Echoe
       end
 
       s.files = files
-      s.executables = executable_pattern
-
-      s.bindir = "bin"
+      
+      s.bindir = if executable_pattern.any?
+        executable_pattern[0].split("/")[0]
+      else
+        "bin"
+      end
+      
+      s.executables = executable_pattern.map do |file|
+        file[(s.bindir.length)..-1]
+      end
+      
       dirs = Dir['{lib,ext}']
       s.extensions = extension_pattern if extension_pattern.any?
       s.require_paths = dirs unless dirs.empty?
