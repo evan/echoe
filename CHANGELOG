@@ -1,5 +1,5 @@
 
-v2.6. Unify pattern handling; changelog accessor, version accessor, expand paths of keys and certificates.
+v2.6. Unify pattern handling; changelog accessor, version accessor, expand paths of keys and certificates; support verbose (Rails-style) changelogs.
 
 v2.5. Add some extension building tasks; adjust clean behavior; rdoc inclusions definitely depend on Manifest now; ruby_version accessor; ignore_pattern for skipping files during the manifest build; bugfixes.
 
