@@ -103,7 +103,7 @@ Publishing options:
 
 Documentation options:
 
-* <tt>rdoc_files</tt> - A filename array, glob array, or regex for filenames that should be passed to RDoc. Also can be referred to as <tt>rdoc_pattern</tt>.
+* <tt>rdoc_pattern</tt> - A filename array, glob array, or regex for filenames that should be passed to RDoc.
 * <tt>rdoc_template</tt> - A path to an RDoc template (defaults to the generic template).
 
 =end
@@ -126,44 +126,32 @@ class Echoe
   FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_files, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extensions, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :bin_pattern, :changelog
   
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files
   
   # legacy
   attr_accessor :extra_deps, :rdoc_pattern
   
-  def initialize(name, version = nil)
+  def initialize(name, _version = nil)
     # Defaults
 
     self.name = name
     self.project = name.downcase
+    self.changelog = "CHANGELOG"
     self.url = ""
     self.author = ""
     self.email = ""
     self.clean_pattern = ["pkg", "doc", "lib/*.#{Config::CONFIG['DLEXT']}", "ext/**/*.#{Config::CONFIG['DLEXT']}", ".config"]
-    self.test_pattern = ['test/**/test_*.rb']
-    
-    self.version = if version
-      version
-    elsif File.exist? "CHANGELOG"
-      open("CHANGELOG").read[/^\s*v([\d\.]+)\. /, 1]
-    else
-      raise "No version supplied in Rakefile"
-    end
-
-    self.changes = if File.exist? "CHANGELOG"
-      open("CHANGELOG").read[/^\s*v([\d\.]+\. .*)/, 1]
-    else
-      ""
-    end
+    self.test_pattern = ['test/**/test_*.rb']    
         
     self.description = ""
     self.summary = ""
     self.install_message = nil
     self.has_rdoc = true
-    self.rdoc_files = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
+    self.rdoc_pattern = /^(lib|bin|tasks)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
+    self.bin_pattern = /^bin\//
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
     self.manifest_name = "Manifest"
@@ -180,22 +168,73 @@ class Echoe
     self.include_rakefile = false
     self.include_gemspec = true    
     self.gemspec_name = "#{name}.gemspec"
-
+    
     yield self if block_given?
-    
-    # set some post-defaults
-    self.certificate_chain = Array(certificate_chain)
-    self.description = summary if description.empty?
-    self.summary = description if summary.empty?
-    self.clean_pattern = Array(clean_pattern) if clean_pattern
-    self.extensions = Array(extensions).map {|ext| Dir[ext]}.flatten
-    
+
     # legacy compatibility
     self.dependencies = extra_deps if extra_deps and dependencies.empty?
     self.project = rubyforge_name if rubyforge_name
-    self.rdoc_files = rdoc_pattern if rdoc_pattern
+    self.rdoc_pattern = rdoc_files if rdoc_files
+
+    # read manifest
+    begin
+      self.files = File.read(manifest_name).split + 
+        [(gemspec_name if include_gemspec)] + 
+        [("Rakefile" if include_rakefile)]
+      self.files = files.compact.uniq
+    rescue Errno::ENOENT
+      unless ARGV.include? "manifest"
+        puts "Missing manifest. You can build one with 'rake manifest'."
+        exit 
+      end
+    end  
+    
+    # snag version and changeset
+    self.version ||= _version    
+    unless version
+      if File.exist? changelog
+        parsed = open(changelog).read[/^\s*v([\d\.]+)(\.|\s|$)/, 1].chomp(".").strip
+        raise "Could not parse version from #{changelog}" unless parsed
+        self.version = parsed
+      else
+        raise "No #{changelog} found, and no version supplied in Rakefile."
+      end
+    end
+
+    self.changes = if File.exist? changelog
+      open(changelog).read[/^\s*v([\d\.]+\. .*)/, 1]
+    else
+      ""
+    end      
+    
+    # set some post-defaults
+    self.certificate_chain = Array(certificate_chain).map {|file| File.expand_path(file)}
+    self.private_key = File.expand_path(private_key) if private_key
+    self.description = summary if description.empty?
+    self.summary = description if summary.empty?
+    self.clean_pattern = apply_pattern(clean_pattern)
+    self.extensions = apply_pattern(extensions, files)
+    self.ignore_pattern = apply_pattern(ignore_pattern)
+    self.rdoc_pattern = apply_pattern(rdoc_pattern, files)
+    self.bin_pattern = apply_pattern(bin_pattern, files)
 
     define_tasks
+  end
+  
+  def apply_pattern(pattern, files = nil)
+    files ||= Dir['**']
+    case pattern
+      when String, Array
+        files & (Array(pattern).map do |p|
+          Dir.glob(p)
+        end.flatten)
+      when Regexp
+        files.select do |file| 
+          file =~ pattern
+        end
+      else
+        []
+    end
   end
 
   def define_tasks
@@ -225,18 +264,8 @@ class Echoe
         s.add_dependency(*dep)
       end
 
-      begin
-        s.files = File.read(manifest_name).split
-        s.files += [gemspec_name] if include_gemspec
-        s.files += ["Rakefile"] if include_rakefile
-        s.files.uniq! # not really necessary
-      rescue Errno::ENOENT
-        unless ARGV.include? "manifest"
-          puts "Missing manifest. You can build one with 'rake manifest'."
-          exit 
-        end
-      end
-      s.executables = s.files.grep(/bin/) { |f| File.basename(f) }
+      s.files = files
+      s.executables = bin_pattern
 
       s.bindir = "bin"
       dirs = Dir['{lib,ext}']
@@ -385,17 +414,7 @@ class Echoe
       
       rd.rdoc_dir = 'doc'
       
-      files = case rdoc_files
-        when Array
-          rdoc_files.map do |pattern|
-            Dir[pattern].select { |file| spec.files.include? file }
-          end.flatten
-        when Regexp
-          spec.files.grep(rdoc_files).uniq
-        else
-          []
-      end
-      
+      files = rdoc_pattern
       files -= [manifest_name]
       
       rd.rdoc_files.push(*files)
@@ -491,13 +510,10 @@ class Echoe
     desc 'Clean up auto-generated files'
     task :clean do
       puts "Cleaning"
-      clean_pattern.each do |pattern|
-        files = Dir[pattern]
-        files.each do |file|
-          if File.exist?(file)
-            puts "- #{file}"
-            rm_rf file
-          end
+      clean_pattern.each do |file|
+        if File.exist?(file)
+          puts "- #{file}"
+          rm_rf file
         end
       end
     end
@@ -535,7 +551,7 @@ class Echoe
       ruby(if File.exist? 'test/test_all.rb'
         "#{RUBY_FLAGS} test/test_all.rb #{FILTER}"
       else
-        tests = test_pattern.map { |g| Dir.glob(g) }.flatten << 'test/unit'
+        tests = apply_pattern(test_pattern) << 'test/unit'
         tests.map! {|f| %Q(require "#{f}")}
         "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
       end)
