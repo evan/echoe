@@ -18,6 +18,8 @@ Echoe includes some optional accessors for more advanced gem configuration.
 
 For example, a simple <tt>Rakefile</tt> might look like this:
 
+  require 'echoe'
+  
   Echoe.new("uncapitalizer") do |p|
     p.author = "Evan Weaver"
     p.summary = "A library that uncapitalizes strings. It's awesome."
