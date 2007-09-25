@@ -428,7 +428,9 @@ class Echoe
             system(PLATFORM =~ /win32/ ? 'nmake' : 'make')
           end
           Dir["#{directory}/*.#{Config::CONFIG['DLEXT']}"].each do |file|
-            cp file, "lib/#{directory.split('/')[1..-1].join('/')}/"
+            dir = "lib/#{directory.split('/')[1..-1].join('/')}/"
+            mkdir_p dir
+            cp file, dir
           end
         end
       end
