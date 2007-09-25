@@ -146,7 +146,7 @@ class Echoe
     self.url = ""
     self.author = ""
     self.email = ""
-    self.clean_pattern = ["pkg", "doc", 'build/*', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "ext/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "ext/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "lib/*.bundle", "*.gem", ".config"]
+    self.clean_pattern = ["pkg", "doc", 'build/*', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
     self.test_pattern = ['test/**/test_*.rb']
     
     self.changelog_patterns = {
