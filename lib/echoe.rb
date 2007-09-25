@@ -148,6 +148,7 @@ class Echoe
     self.email = ""
     self.clean_pattern = ["pkg", "doc", 'build/*', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
     self.test_pattern = ['test/**/test_*.rb']
+    self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/    
     
     self.changelog_patterns = {
         :version => [
@@ -238,7 +239,7 @@ class Echoe
     self.ignore_pattern = apply_pattern(ignore_pattern)
     self.rdoc_pattern = apply_pattern(rdoc_pattern, files)
     self.executable_pattern = apply_pattern(executable_pattern, files)
-      
+    self.test_pattern = apply_pattern(test_pattern)      
 
     define_tasks
   end
@@ -555,11 +556,9 @@ class Echoe
       puts "Building Manifest"
       old_files = files
       files = []
-      Find.find '.' do |file|
-        file = file[2..-1]
+      Dir['**/**'].each do |file|
         next unless file
-        next if file =~ /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
-        next if file =~ ignore_pattern and ignore_pattern
+        next if ignore_pattern.include?(file)
         next if File.directory?(file)
         next if !include_rakefile and file == "Rakefile"
         files << file
@@ -585,7 +584,7 @@ class Echoe
       ruby(if File.exist? 'test/test_all.rb'
         "#{RUBY_FLAGS} test/test_all.rb #{FILTER}"
       else
-        tests = apply_pattern(test_pattern) << 'test/unit'
+        tests = test_pattern << 'test/unit'
         tests.map! {|f| %Q(require "#{f}")}
         "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
       end)
