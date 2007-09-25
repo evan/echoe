@@ -307,7 +307,7 @@ class Echoe
       if File.exist? "test/test_all.rb"
         s.test_file = "test/test_all.rb"
       else
-        s.test_files = Dir[*test_pattern]
+        s.test_files = test_pattern
       end
       
       if eval
