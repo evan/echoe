@@ -293,7 +293,7 @@ class Echoe
       end
       
       s.executables = executable_pattern.map do |file|
-        file[(s.bindir.length)..-1]
+        file[(s.bindir.length + 1)..-1]
       end
       
       dirs = Dir['{lib,ext}']
