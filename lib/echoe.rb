@@ -421,14 +421,16 @@ class Echoe
     if extension_pattern.any?
     
       task :compile => [:lib] do    
-        extension_pattern.each do |extension|
-          directory = File.dirname(extension)
-          Dir.chdir(directory) do 
+        extension_pattern.each do |extension|          
+          ext_dir = File.dirname(extension)
+          lib_target = nil
+          Dir.chdir(ext_dir) do 
             ruby File.basename(extension)
             system(PLATFORM =~ /win32/ ? 'nmake' : 'make')
+            lib_target = open('Makefile').readlines.grep(/target_prefix = /).first.split('=').last.chomp("\n").strip
           end
-          Dir["#{directory}/*.#{Config::CONFIG['DLEXT']}"].each do |file|
-            dir = "lib/#{directory.split('/')[1..-1].join('/')}/"
+          Dir["#{ext_dir}/*.#{Config::CONFIG['DLEXT']}"].each do |file|
+            dir = "lib/#{lib_target}/".gsub('//', '/')
             mkdir_p dir
             cp file, dir
           end
