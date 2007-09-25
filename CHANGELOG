@@ -1,5 +1,5 @@
 
-v2.6.1. Fix executable pattern bug.
+v2.6.2. Fix executable pattern bug; use a better default clean pattern.
 
 v2.6. Unify pattern handling; changelog accessor, version accessor, expand paths of keys and certificates; support verbose (Rails-style) changelogs.
 
