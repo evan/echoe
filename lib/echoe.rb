@@ -201,6 +201,8 @@ class Echoe
       unless ARGV.include? "manifest"
         puts "Missing manifest. You can build one with 'rake manifest'."
         exit 
+      else
+        self.files = []
       end
     end  
     
