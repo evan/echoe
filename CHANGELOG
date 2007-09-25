@@ -25,4 +25,4 @@ v1.2. build_manifest Rake task.
 
 v1.1. Sane error messages on releasing new or duplicate gems; allow Manifest to not end in .txt.
 
-v1.0.0. Fork from Hoe.
+v1.0. Fork from Hoe.
