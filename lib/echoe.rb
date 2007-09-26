@@ -212,7 +212,9 @@ class Echoe
     unless version
       if File.exist? changelog
         parsed = Array(changelog_patterns[:version]).map do |pattern|
-          open(changelog).read[pattern, 1]
+          open(changelog) do |log|
+            log.read[pattern, 1]
+          end
         end.compact.first
         raise "Could not parse version from #{changelog}" unless parsed
         self.version = parsed.chomp(".").strip
@@ -223,7 +225,9 @@ class Echoe
 
     self.changes = if File.exist? changelog
       Array(changelog_patterns[:changes]).map do |pattern|
-        open(changelog).read[pattern, 1]
+        open(changelog) do |log|
+          log.read[pattern, 1]
+        end
       end.compact.first or ""
     else
       ""
