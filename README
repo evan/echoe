@@ -1,6 +1,4 @@
 
-echoe
-
 Echoe is a simple tool for working with Rubygems. It generates Rake tasks for documentation, extension compiling, testing, packaging, and deployment.
 
 == License
