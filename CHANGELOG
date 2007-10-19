@@ -1,4 +1,6 @@
 
+v2.7.0. Rubygems 0.9.4.5 compatibility and requirement. Cross-packaging hacks for same. Add rubygems_version accessor. Manifest alerts about removed files now as well as added.
+
 v2.6.4. Fix related issue.
 
 v2.6.3. Fix issue with shared object paths in :compile task.

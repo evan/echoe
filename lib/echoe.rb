@@ -600,9 +600,16 @@ class Echoe
       files.uniq!
       
       File.open(manifest_name, 'w').puts(files)
-      puts(files.map do |file| 
-        (old_files.include?(file) ? " " : "+") + " " + file
-      end)
+      
+      (files & old_files).sort.each do |file|
+        sign = " "
+        if old_files.include?(file) and !files.include?(file)
+          sign = "-"
+        elsif files.include?(file) and !old_files.include?(file)
+          sign = "+"
+        end
+        puts "#{sign} #{file}"
+      end
     end
     
     task :build_manifest => [:manifest]
