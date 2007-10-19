@@ -70,7 +70,7 @@ The following tasks are made available to your gem.
 
 Packaging:
 
-* <tt>manifest</tt> -  Build a manifest list.
+* <tt>manifest</tt> -  Build a manifest list. Shows added and removed files.
 * <tt>docs</tt> -  Build the documentation.
 * <tt>package</tt> -  Build all the packages.
 
