@@ -6,7 +6,7 @@ module Gem
 
     alias :old_validate :validate    
            
-    PLATFORM_CROSS_TARGETS = ["aix", "cygwin", "darwin", "freebsd", "hpux", "java", "linux", "mingw", "mswin", "netbsdelf", "openbsd", "solaris", "test", "_platform"]
+    PLATFORM_CROSS_TARGETS = ["aix", "cygwin", "darwin", "freebsd", "hpux", "java", "linux", "mingw", "mswin", "netbsdelf", "openbsd", "solaris", "test", "_platform", "jruby"]
     
     def validate
       begin
@@ -15,7 +15,7 @@ module Gem
         if platform =~ /(#{PLATFORM_CROSS_TARGETS.join("|")})/i
           true
         else
-          raise Gem::InvalidSpecificationException, "unknown packaging target #{platform}"
+          raise Gem::InvalidSpecificationException, "Unknown package target \"#{platform}\"."
         end
       end
     end

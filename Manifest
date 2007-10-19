@@ -1,6 +1,6 @@
 CHANGELOG
+lib/echoe/platform.rb
 lib/echoe.rb
-lib/platform.rb
 LICENSE
 Manifest
 MIT-LICENSE

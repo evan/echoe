@@ -13,7 +13,21 @@ require 'highline/import'
 gem 'rubyforge', '>=0.4.0'
 require 'rubyforge'
 
-require 'lib/platform'
+$LOAD_PATH << File.dirname(__FILE__)
+require 'echoe/platform'
+
+$platform = "ruby"
+
+def reset_target target #:nodoc:
+  $platform = target
+  Object.send(:const_set, "RUBY_PLATFORM", target)
+end
+
+if target = ARGV.detect do |arg| 
+    Gem::Specification::PLATFORM_CROSS_TARGETS.include? arg
+  end
+  reset_target target
+end
 
 =begin rdoc
 
@@ -182,7 +196,7 @@ class Echoe
     self.need_tar_gz = true
     self.need_tgz = false    
     self.need_zip = false
-    self.platform = "ruby"
+    self.platform = $platform
 
     self.include_rakefile = false
     self.include_gemspec = true    
@@ -375,11 +389,11 @@ class Echoe
         raise "Key required, but not found. Maybe you forget to set ENV['GEM_PRIVATE_KEY']?" if require_signed
         puts "Private key not found; gem will not be signed."
       end
-      puts "Targeting \"#{@platform}\" platform."
+      puts "Targeting \"#{platform}\" platform."
     end  
 
     desc 'Install the gem'
-    task :install => [:clean, :package] do
+    task :install => [:clean, :package, :uninstall] do
       system "sudo gem install pkg/*.gem -P MediumSecurity"
     end
 
@@ -453,9 +467,8 @@ class Echoe
     ### Cross-platform targets
     
     Gem::Specification::PLATFORM_CROSS_TARGETS.each do |target|
-      task target do
-        @platform = target
-        Object.send(:const_set, "RUBY_PLATFORM", target)
+      task target do 
+        reset_target target
       end
     end
     
