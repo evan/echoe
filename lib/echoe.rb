@@ -9,8 +9,11 @@ require 'rake/testtask'
 require 'rbconfig'
 require 'open-uri'
 require 'highline/import'
+
 gem 'rubyforge', '>=0.4.0'
 require 'rubyforge'
+
+require 'lib/platform'
 
 =begin rdoc
 
@@ -148,7 +151,7 @@ class Echoe
     self.email = ""
     self.clean_pattern = ["pkg", "doc", 'build/*', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
     self.test_pattern = ['test/**/test_*.rb']
-    self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/    
+    self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/ 
     
     self.changelog_patterns = {
         :version => [
@@ -179,6 +182,7 @@ class Echoe
     self.need_tar_gz = true
     self.need_tgz = false    
     self.need_zip = false
+    self.platform = "ruby"
 
     self.include_rakefile = false
     self.include_gemspec = true    
@@ -279,7 +283,7 @@ class Echoe
       s.post_install_message = install_message if install_message
       s.description = description
       s.required_ruby_version = ruby_version
-      s.platform = platform if platform
+      s.platform = platform
 
       if private_key and File.exist? private_key
         s.signing_key = private_key
@@ -370,7 +374,8 @@ class Echoe
       else
         raise "Key required, but not found. Maybe you forget to set ENV['GEM_PRIVATE_KEY']?" if require_signed
         puts "Private key not found; gem will not be signed."
-      end      
+      end
+      puts "Targeting \"#{@platform}\" platform."
     end  
 
     desc 'Install the gem'
@@ -443,6 +448,15 @@ class Echoe
       
       task :test => [:compile]
       
+    end
+    
+    ### Cross-platform targets
+    
+    Gem::Specification::PLATFORM_CROSS_TARGETS.each do |target|
+      task target do
+        @platform = target
+        Object.send(:const_set, "RUBY_PLATFORM", target)
+      end
     end
     
     ### Documentation
