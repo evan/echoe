@@ -1,7 +1,7 @@
 
 module Gem
 
-  # Overrides to support cross packaging, which Rubygems 0.9.5 doesn't do
+  # Overrides for cross packaging, which Rubygems 0.9.5 doesn't do
   class Specification
 
     alias :old_validate :validate    
@@ -22,3 +22,19 @@ module Gem
     
   end
 end
+
+$platform = "ruby"
+
+def reset_target target #:nodoc:
+  $platform = target
+  Object.send(:remove_const, "RUBY_PLATFORM")
+  Object.send(:const_set, "RUBY_PLATFORM", target)
+end
+
+if target = ARGV.detect do |arg| 
+  # Hack to get the platform set before the Rakefile evaluates
+    Gem::Specification::PLATFORM_CROSS_TARGETS.include? arg
+  end
+  reset_target target
+end
+

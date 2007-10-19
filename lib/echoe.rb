@@ -16,19 +16,6 @@ require 'rubyforge'
 $LOAD_PATH << File.dirname(__FILE__)
 require 'echoe/platform'
 
-$platform = "ruby"
-
-def reset_target target #:nodoc:
-  $platform = target
-  Object.send(:const_set, "RUBY_PLATFORM", target)
-end
-
-if target = ARGV.detect do |arg| 
-    Gem::Specification::PLATFORM_CROSS_TARGETS.include? arg
-  end
-  reset_target target
-end
-
 =begin rdoc
 
 Echoe includes some optional accessors for more advanced gem configuration.
@@ -72,6 +59,14 @@ Note that you can also set the key and certificate locations in the Rakefile its
 Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that, along with a comment containing the original <tt>Rakefile</tt> source. Downstream repackagers can use the <tt>gemspec</tt> as-is to build new versions of your gem. This way no dependencies are added, but no contents are lost.
 
 If you do want metadependencies, add <tt>'echoe'</tt> to the <tt>p.dependencies</tt> array, and set <tt>p.include_rakefile = true</tt> and <tt>p.include_gemspec = false</tt>.
+
+== Cross-packaging
+
+Echoe supports platform Rake targets to allow you to cross-package your gems. Just write the spec assuming <tt>RUBY_PLATFORM</tt> will be what you need it to be for each architecture, and then invoke Rake with the platform name when you're cross-packaging. 
+
+For example, on JRuby, <tt>rake package</tt> will build a generic <tt>-ruby</tt> type gem. But if you want to include a Java-specific extension, you can do one of two things. You can package from within JRuby by checking if <tt>RUBY_PLATFORM =~ /java/</tt> and setting <tt>p.platform = jruby</tt>, or you can run <tt>rake java package</tt>, which will set <tt>RUBY_PLATFORM</tt> and <tt>p.platform</tt> for you.
+
+This way you can run <tt>rake java package</tt>, <tt>rake aix install</tt>, or whatever task you need and Echoe will behave just like you're packaging from within the target platform.
 
 == Accessor options
 
