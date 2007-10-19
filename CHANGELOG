@@ -1,5 +1,5 @@
 
-v2.x. support compiling without extension registration for win32 gems; allow targeting of every platform on RubyGems 0.9.5.
+vSVN. support compiling without extension registration for win32 gems; allow targeting of every platform on RubyGems 0.9.5.
 
 v2.7.0. Add coverage task; change default test pattern; Rubygems 0.9.4.5 compatibility and requirement. Cross-packaging hacks for same. Add rubygems_version accessor. Manifest alerts about removed files now as well as added.
 
