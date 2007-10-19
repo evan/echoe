@@ -601,7 +601,7 @@ class Echoe
       
       File.open(manifest_name, 'w').puts(files)
       
-      (files & old_files).sort.each do |file|
+      (files | old_files).sort.each do |file|
         sign = " "
         if old_files.include?(file) and !files.include?(file)
           sign = "-"
