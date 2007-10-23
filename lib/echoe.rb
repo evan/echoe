@@ -9,6 +9,7 @@ require 'rake/testtask'
 require 'rbconfig'
 require 'open-uri'
 require 'highline/import'
+require 'rcov/rcovtask'
 
 gem 'rubyforge', '>=0.4.0'
 require 'rubyforge'
@@ -88,8 +89,12 @@ Common packaging options:
 
 * <tt>dependencies</tt> - An array of dependencies for this gem. For example, <tt>['mongrel', 'rake >=0.7.1']</tt>.
 * <tt>extension_pattern</tt> - A filename array, glob array, or regex for extension files that need to be run at install time. Defaults to <tt>"ext/**/extconf.rb"</tt>.
+
+Testing options:
+
 * <tt>clean_pattern</tt> - A filename array, glob array, or regex for files that should be removed when <tt>rake clean</tt> is run.
 * <tt>test_pattern</tt> - A filename array, glob array, or regex for test runners. Overridden by <tt>"test/test_all.rb"</tt>, if it exists.
+* <tt>rcov_options</tt> - Any extra flags to pass to RCov when coverage reports are run.
 
 Uncommon packaging options:
 * <tt>platform</tt> - What platform this gem is for.
@@ -138,10 +143,9 @@ class Echoe
   RUBY_FLAGS = ENV['RUBY_FLAGS'] ||
     "-w -I#{%w(lib ext bin test).join(File::PATH_SEPARATOR)}" +
     (RUBY_DEBUG ? " #{RUBY_DEBUG}" : '')
-  FILTER = ENV['FILTER'] # for tests (eg FILTER="-n test_blah")
   
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files, :changelog_patterns, :rubygems_version
@@ -159,7 +163,7 @@ class Echoe
     self.author = ""
     self.email = ""
     self.clean_pattern = ["pkg", "doc", 'build/*', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
-    self.test_pattern = ['test/**/test_*.rb']
+    self.test_pattern = File.exist?("test/test_all.rb") ? "test/test_all.rb" : ['test/**/test_*.rb']
     self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/ 
     
     self.changelog_patterns = {
@@ -176,9 +180,9 @@ class Echoe
     self.description = ""
     self.summary = ""
     self.install_message = nil
+    self.executable_pattern = /^bin\//
     self.has_rdoc = true
     self.rdoc_pattern = /^(lib|bin|tasks|ext)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
-    self.executable_pattern = /^bin\//
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
     self.manifest_name = "Manifest"
@@ -612,23 +616,27 @@ class Echoe
       end
     end
     
-    task :build_manifest => [:manifest]
+    task :build_manifest => :manifest
   
-    ### Tests
+    ### Testing
   
-    # XXX unreadable
     desc 'Run the test suite'
     task :test do
-      ruby(if File.exist? 'test/test_all.rb'
-        "#{RUBY_FLAGS} test/test_all.rb #{FILTER}"
-      else
-        tests = test_pattern << 'test/unit'
-        tests.map! {|f| %Q(require "#{f}")}
-        "#{RUBY_FLAGS} -e '#{tests.join("; ")}' #{FILTER}"
-      end)
+      tests = test_pattern.map do |file| 
+        "require \"#{f}\"; "
+      end
+      ruby "#{RUBY_FLAGS} -e '#{tests}'"      
     end
   
     task :default => :test
+    
+    Rcov::RcovTask.new(:coverage) do |t|
+      t.test_files = test_pattern
+      t.rcov_options << rcov_options if rcov_options
+      t.verbose = true
+    end
+    
+    task :rcov => :coverage
     
   end
 end

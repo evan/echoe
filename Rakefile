@@ -7,7 +7,7 @@ Echoe.new('echoe') do |p|
   p.summary = 'A tool for packaging Ruby gems.'
   p.url = 'http://blog.evanweaver.com/files/doc/fauna/echoe/'
   p.docs_host = 'blog.evanweaver.com:~/www/bax/public/files/doc/'
-  p.dependencies = ['rake', 'rubyforge >=0.4.3', 'highline']
+  p.dependencies = ['rake', 'rubyforge >=0.4.3', 'highline', 'rcov']
   p.require_signed = true
   p.rubygems_version = '>= 0.9.4.5'
 

@@ -77,6 +77,7 @@ Packaging:
 Testing:
 
 * <tt>test</tt> -  Run the test suite.
+* <tt>coverage</tt> -  Generate a coverage report.
 * <tt>compile</tt> - Compile C extensions, if available.
 * <tt>clean</tt> - Clean up generated documentation, packaging, and build files.
 * <tt>install</tt> -  Install the gem locally.
