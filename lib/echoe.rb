@@ -623,7 +623,7 @@ class Echoe
     desc 'Run the test suite'
     task :test do
       tests = test_pattern.map do |file| 
-        "require \"#{f}\"; "
+        "require \"#{file}\"; "
       end
       ruby "#{RUBY_FLAGS} -e '#{tests}'"      
     end
