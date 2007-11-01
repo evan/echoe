@@ -634,13 +634,14 @@ class Echoe
   
     task :default => :test
     
-    Rcov::RcovTask.new(:coverage) do |t|
-      t.test_files = test_pattern
-      t.rcov_options << rcov_options if rcov_options
-      t.verbose = true
+    if defined? Rcov      
+      Rcov::RcovTask.new(:coverage) do |t|
+        t.test_files = test_pattern
+        t.rcov_options << rcov_options if rcov_options
+        t.verbose = true
+      end      
+      task :rcov => :coverage
     end
-    
-    task :rcov => :coverage
     
   end
 end
