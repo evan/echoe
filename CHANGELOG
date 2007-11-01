@@ -1,6 +1,8 @@
 
 vSVN. support compiling without extension registration for win32 and java targets.
 
+v2.7.1. Rcov changed to a weak dependency for JRuby.
+
 v2.7.0. Add coverage task; change default test pattern; Rubygems 0.9.4.5 compatibility and requirement. Cross-packaging hacks for same. Add rubygems_version accessor. Manifest alerts about removed files now as well as added. Allow targeting of every platform on RubyGems 0.9.5.
 
 v2.6.4. Fix related issue.

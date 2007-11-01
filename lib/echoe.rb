@@ -9,7 +9,11 @@ require 'rake/testtask'
 require 'rbconfig'
 require 'open-uri'
 require 'highline/import'
-require 'rcov/rcovtask'
+
+begin
+  require 'rcov/rcovtask' 
+rescue LoadError
+end
 
 gem 'rubyforge', '>=0.4.0'
 require 'rubyforge'
