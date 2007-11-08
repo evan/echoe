@@ -186,6 +186,7 @@ class Echoe
     self.install_message = nil
     self.executable_pattern = /^bin\//
     self.has_rdoc = true
+    self.rcov_options = []
     self.rdoc_pattern = /^(lib|bin|tasks|ext)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
     self.rdoc_options = ['--line-numbers', '--inline-source']
     self.dependencies = []
@@ -637,7 +638,7 @@ class Echoe
     if defined? Rcov      
       Rcov::RcovTask.new(:coverage) do |t|
         t.test_files = test_pattern
-        t.rcov_options << rcov_options if rcov_options
+        t.rcov_opts << rcov_options if rcov_options
         t.verbose = true
       end      
       task :rcov => :coverage
