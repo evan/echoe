@@ -1,7 +1,7 @@
 
 vSVN. support compiling without extension registration for win32 and java targets.
 
-v2.7.2. Don't try to verify the existence of the RDoc template.
+v2.7.2. Don't try to verify the existence of the RDoc template. Fixes for the RCov task.
 
 v2.7.1. Rcov changed to a weak dependency for JRuby.
 
