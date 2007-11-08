@@ -491,7 +491,7 @@ class Echoe
 
       if rdoc_template
         rd.template = rdoc_template 
-      elsif ENV['RDOC_TEMPLATE'] and File.exist? ENV['RDOC_TEMPLATE']
+      elsif ENV['RDOC_TEMPLATE']
         rd.template = ENV['RDOC_TEMPLATE']
       end      
 
