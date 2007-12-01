@@ -1,3 +1,2 @@
 
 * Figure out why need_gem = false caused releasing to fail
-* Add support for Rubyforge release announcements
