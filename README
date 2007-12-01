@@ -11,6 +11,7 @@ The public certificate for this gem is at http://rubyforge.org/frs/download.php/
 
 * simple configuration
 * comprehensive gem deployment
+* cross-packaging
 * signed gem support
 * automatic changeset parsing
 * documentation upload to any host
