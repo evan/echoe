@@ -1,4 +1,5 @@
 CHANGELOG
+lib/echoe/extensions.rb
 lib/echoe/platform.rb
 lib/echoe.rb
 LICENSE

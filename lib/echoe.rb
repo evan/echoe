@@ -20,6 +20,7 @@ require 'rubyforge'
 
 $LOAD_PATH << File.dirname(__FILE__)
 require 'echoe/platform'
+require 'echoe/extensions'
 
 =begin rdoc
 
@@ -134,20 +135,6 @@ Documentation options:
 
 class Echoe
 
-  rubyprefix = Config::CONFIG['prefix']
-  sitelibdir = Config::CONFIG['sitelibdir']
-
-  PREFIX = ENV['PREFIX'] || rubyprefix
-  RUBYLIB = if PREFIX == rubyprefix then
-              sitelibdir
-            else
-              File.join(PREFIX, sitelibdir[rubyprefix.size..-1])
-            end
-  RUBY_DEBUG = ENV['RUBY_DEBUG']
-  RUBY_FLAGS = ENV['RUBY_FLAGS'] ||
-    "-w -I#{%w(lib ext bin test).join(File::PATH_SEPARATOR)}" +
-    (RUBY_DEBUG ? " #{RUBY_DEBUG}" : '')
-  
   # user-configurable
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options
   
@@ -625,12 +612,10 @@ class Echoe
   
     ### Testing
   
-    desc 'Run the test suite'
-    task :test do
-      tests = test_pattern.map do |file| 
-        "require \"#{file}\"; "
-      end
-      ruby "#{RUBY_FLAGS} -e '#{tests}'"      
+    Rake::TestTask.new do |t|
+      t.libs += ['lib', 'ext', 'bin', 'test']
+      t.test_files = test_pattern
+      t.verbose = true
     end
   
     task :default => :test
@@ -644,16 +629,6 @@ class Echoe
       task :rcov => :coverage
     end
     
-  end
-end
-
-class ::Rake::SshDirPublisher # :nodoc:
-  attr_reader :host, :remote_dir, :local_dir
-end
-
-class String #:nodoc:
-  def uncapitalize #:nodoc:
-    "#{self[0..0].downcase}#{self[1..-1]}"
   end
 end
 
