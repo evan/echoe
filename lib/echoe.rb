@@ -619,6 +619,14 @@ class Echoe
     end
   
     task :default => :test
+            
+    if File.exist? 'test/setup.rb'
+      task :setup_test_environment do
+        Echoe.silence { system("ruby test/setup.rb") }
+      end
+      task :test => :setup_test_environment 
+    end
+    
     
     if defined? Rcov      
       Rcov::RcovTask.new(:coverage) do |t|
