@@ -1,6 +1,8 @@
 
 vSVN. support compiling without extension registration for win32 and java targets.
 
+v2.7.4. Ensured teardown.rb just like setup.rb. Load multi_rails automatically if its available. ENV['VERBOSE'] obeyed for Echoe.silence.
+
 v2.7.3. Put some handy things in lib/echoe/extensions.rb; use Rake::TestTask instead of screwing around in the shell. Automatically run test/setup.rb before the test task, if it exists.
 
 v2.7.2. Don't try to verify the existence of the RDoc template. Fixes for the RCov task.

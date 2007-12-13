@@ -618,7 +618,7 @@ class Echoe
     ### Testing
   
     Rake::TestTask.new(:test_inner) do |t|
-      t.libs += ['lib', 'ext', 'bin', 'test']
+      t.libs = ['lib', 'ext', 'bin', 'test']
       t.test_files = test_pattern
       t.verbose = true
     end
