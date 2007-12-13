@@ -11,16 +11,19 @@ end
 
 class Echoe
 
-  # http://pastie.caboo.se/127840
-  
   def self.silence
-    stdout, stderr = $stdout.clone, $stderr.clone
-    $stdout.reopen(File.new('/tmp/stdout.echoe', 'w'))
-    $stderr.reopen(File.new('/tmp/stderr.echoe', 'w'))
-    yield
-    $stdout.reopen(stdout)
-    $stderr.reopen(stderr)
+    if !ENV['VERBOSE']      
+      stdout, stderr = $stdout.clone, $stderr.clone
+      $stdout.reopen(File.new('/tmp/stdout.echoe', 'w'))
+      $stderr.reopen(File.new('/tmp/stderr.echoe', 'w'))
+      yield
+      $stdout.reopen(stdout)
+      $stderr.reopen(stderr)
+    else
+      yield
+    end
   end
+  
 end
 
 # Redefine instead of chain a Rake task

@@ -15,6 +15,11 @@ begin
 rescue LoadError
 end
 
+begin
+  require 'load_multi_rails_rake_tasks'
+rescue LoadError
+end
+
 gem 'rubyforge', '>=0.4.0'
 require 'rubyforge'
 
@@ -612,21 +617,33 @@ class Echoe
   
     ### Testing
   
-    Rake::TestTask.new do |t|
+    Rake::TestTask.new(:test_inner) do |t|
       t.libs += ['lib', 'ext', 'bin', 'test']
       t.test_files = test_pattern
       t.verbose = true
     end
   
-    task :default => :test
-            
-    if File.exist? 'test/setup.rb'
-      task :setup_test_environment do
-        Echoe.silence { system("ruby test/setup.rb") }
+    task :test do
+      if File.exist? 'test/setup.rb'  
+        Echoe.silence do
+          puts "Setting up test environment"
+          system("ruby test/setup.rb")
+        end
       end
-      task :test => :setup_test_environment 
+      begin
+        Rake::Task[:test_inner].already_invoked = false
+        Rake::Task[:test_inner].invoke
+      ensure        
+        if File.exist? 'test/teardown.rb'        
+          Echoe.silence do 
+            puts "Tearing down test environment"
+            system("ruby test/teardown.rb")
+          end
+        end
+      end      
     end
-    
+  
+    task :default => :test
     
     if defined? Rcov      
       Rcov::RcovTask.new(:coverage) do |t|
