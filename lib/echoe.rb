@@ -197,14 +197,14 @@ class Echoe
     self.include_rakefile = false
     self.include_gemspec = true    
     self.gemspec_name = "#{name}.gemspec"
-    
+
     yield self if block_given?
 
     # legacy compatibility
     self.dependencies = extra_deps if extra_deps and dependencies.empty?
     self.project = rubyforge_name if rubyforge_name
     self.rdoc_pattern = rdoc_files if rdoc_files
-    self.extension_pattern = extensions if extensions
+    self.extension_pattern = extensions if extensions    
 
     # read manifest
     begin
@@ -631,8 +631,12 @@ class Echoe
         end
       end
       begin
-        Rake::Task[:test_inner].already_invoked = false
-        Rake::Task[:test_inner].invoke
+        test = Rake::Task[:test_inner]        
+        if test.respond_to? :already_invoked=
+          # Method provided by MultiRails
+          test.already_invoked = false
+        end
+        test.invoke
       ensure        
         if File.exist? 'test/teardown.rb'        
           Echoe.silence do 

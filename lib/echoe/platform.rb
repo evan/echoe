@@ -6,7 +6,7 @@ module Gem
 
     alias :old_validate :validate    
            
-    PLATFORM_CROSS_TARGETS = ["aix", "cygwin", "darwin", "freebsd", "hpux", "java", "linux", "mingw", "mswin", "netbsdelf", "openbsd", "solaris", "test", "_platform", "jruby"]
+    PLATFORM_CROSS_TARGETS = ["aix", "cygwin", "darwin", "freebsd", "hpux", "java", "linux", "mingw", "mswin", "netbsdelf", "openbsd", "solaris", "_platform", "jruby"]
     
     def validate
       begin
