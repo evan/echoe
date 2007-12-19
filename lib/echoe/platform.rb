@@ -23,7 +23,7 @@ module Gem
   end
 end
 
-$platform = "ruby"
+$platform = "ruby" # or Gem::PLATFORM::RUBY maybe
 
 def reset_target target #:nodoc:
   $platform = target
