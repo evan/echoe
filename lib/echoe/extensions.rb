@@ -16,9 +16,12 @@ class Echoe
       stdout, stderr = $stdout.clone, $stderr.clone
       $stdout.reopen(File.new('/tmp/stdout.echoe', 'w'))
       $stderr.reopen(File.new('/tmp/stderr.echoe', 'w'))
-      yield
-      $stdout.reopen(stdout)
-      $stderr.reopen(stderr)
+      begin
+        yield
+      ensure
+        $stdout.reopen(stdout)
+        $stderr.reopen(stderr)
+      end
     else
       yield
     end

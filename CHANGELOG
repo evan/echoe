@@ -1,6 +1,8 @@
 
 vSVN. support compiling without extension registration for win32 and java targets.
 
+v2.7.6. Better Echoe.silence behavior.
+
 v2.7.5. Fix bug when MultiRails isn't installed; remove "test" from platform targets.
 
 v2.7.4. Ensured teardown.rb just like setup.rb. Load multi_rails automatically if its available. ENV['VERBOSE'] obeyed for Echoe.silence.
