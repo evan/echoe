@@ -144,7 +144,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options
   
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files, :changelog_patterns, :rubygems_version
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo
   
   # legacy
   attr_accessor :extra_deps, :rdoc_files, :extensions
@@ -178,6 +178,7 @@ class Echoe
     self.install_message = nil
     self.executable_pattern = /^bin\//
     self.has_rdoc = true
+    self.use_sudo = RUBY_PLATFORM !~ /mswin32|cygwin/
     self.rcov_options = []
     self.rdoc_pattern = /^(lib|bin|tasks|ext)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
     self.rdoc_options = ['--line-numbers', '--inline-source']
@@ -391,12 +392,12 @@ class Echoe
 
     desc 'Install the gem'
     task :install => [:clean, :package, :uninstall] do
-      system "sudo gem install pkg/*.gem -P MediumSecurity"
+      system "#{'sudo' if use_sudo} gem install pkg/*.gem -P MediumSecurity --no-update-sources"
     end
 
     desc 'Uninstall the gem'
     task :uninstall do
-      system "sudo gem uninstall #{name} -a -i -x"
+      system "#{'sudo' if use_sudo} gem uninstall #{name} -a -i -x"
     end
 
     desc 'Package and upload the release to Rubyforge'

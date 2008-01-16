@@ -1,5 +1,5 @@
 
-vSVN. support compiling without extension registration for win32 and java targets.
+v2.7.7. Don't use sudo on win32/cygwin (Kevin Williams).
 
 v2.7.6. Better Echoe.silence behavior.
 
