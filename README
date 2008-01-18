@@ -5,9 +5,9 @@ Echoe is a simple tool for working with Rubygems. It generates Rake tasks for do
 
 Copyright 2007, 2008 Cloudburst, LLC. Licensed under the AFL 3. See the included LICENSE file. Portions copyright 2006 Ryan Davis/Zen Spider Software and used with permission. See the included MIT-LICENSE file.
 
-The public certificate for the gem is here[link:http://rubyforge.org/frs/download.php/25331/evan_weaver-original-public_cert.pem]. 
+The public certificate for the gem is here[http://rubyforge.org/frs/download.php/25331/evan_weaver-original-public_cert.pem]. 
 
-If you like this software, please {make a donation to charity}[link:http://blog.evanweaver.com/donate/] or {recommend Evan}[link:http://www.workingwithrails.com/person/7739-evan-weaver] at Working with Rails.
+If you like this software, please {make a donation to charity}[http://blog.evanweaver.com/donate/] or {recommend Evan}[http://www.workingwithrails.com/person/7739-evan-weaver] at Working with Rails.
 
 == Features
 
