@@ -181,7 +181,13 @@ class Echoe
     self.use_sudo = RUBY_PLATFORM !~ /mswin32|cygwin/
     self.rcov_options = []
     self.rdoc_pattern = /^(lib|bin|tasks|ext)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
-    self.rdoc_options = ['--line-numbers', '--inline-source']
+
+    title = (name.downcase == name ? name.capitalize : name)
+    self.rdoc_options = ['--line-numbers', '--inline-source', '--title', title]
+    
+    readme = Dir['*'].detect { |filename| filename =~ /^readme/i }
+    self.rdoc_options += ['--main', readme] if readme
+      
     self.dependencies = []
     self.manifest_name = "Manifest"
     self.extension_pattern = ["ext/**/extconf.rb", "ext/extconf.rb"]
@@ -256,7 +262,7 @@ class Echoe
     self.clean_pattern = apply_pattern(clean_pattern)
     self.extension_pattern = apply_pattern(extension_pattern, files)
     self.ignore_pattern = apply_pattern(ignore_pattern)
-    self.rdoc_pattern = apply_pattern(rdoc_pattern, files)
+    self.rdoc_pattern = apply_pattern(rdoc_pattern, files) - [manifest_name]
     self.executable_pattern = apply_pattern(executable_pattern, files)
     self.test_pattern = apply_pattern(test_pattern)      
 
@@ -475,24 +481,17 @@ class Echoe
     ### Documentation
 
     Rake::RDocTask.new(:docs) do |rd|      
-      rd.main = Dir['*'].detect {|f| f =~ /^readme/i}
+      # rd.main = Dir['*'].detect {|f| f =~ /^readme/i}
       rd.options += Array(rdoc_options)
       
-      rd.rdoc_dir = 'doc'
-      
-      files = rdoc_pattern
-      files -= [manifest_name]
-      
-      rd.rdoc_files.push(*files)
+      rd.rdoc_dir = 'doc'      
+      rd.rdoc_files.push(*rdoc_pattern)
 
       if rdoc_template
         rd.template = rdoc_template 
       elsif ENV['RDOC_TEMPLATE']
         rd.template = ENV['RDOC_TEMPLATE']
       end      
-
-      title = name.downcase == name ? name.capitalize : name
-      rd.options << "-t #{title}"
     end
         
     task :doc => [:redocs]
