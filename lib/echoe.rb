@@ -617,35 +617,40 @@ class Echoe
     task :build_manifest => :manifest
   
     ### Testing
+    
+    if test_pattern.any?
   
-    Rake::TestTask.new(:test_inner) do |t|
-      t.libs = ['lib', 'ext', 'bin', 'test']
-      t.test_files = test_pattern
-      t.verbose = true
-    end
-  
-    task :test do
-      if File.exist? 'test/setup.rb'  
-        Echoe.silence do
-          puts "Setting up test environment"
-          system("ruby test/setup.rb")
-        end
+      Rake::TestTask.new(:test_inner) do |t|
+        t.libs = ['lib', 'ext', 'bin', 'test']
+        t.test_files = test_pattern
+        t.verbose = true
       end
-      begin
-        test = Rake::Task[:test_inner]        
-        if test.respond_to? :already_invoked=
-          # Method provided by MultiRails
-          test.already_invoked = false
-        end
-        test.invoke
-      ensure        
-        if File.exist? 'test/teardown.rb'        
-          Echoe.silence do 
-            puts "Tearing down test environment"
-            system("ruby test/teardown.rb")
+    
+      desc "Run the test suite"
+      task :test do
+        if File.exist? 'test/setup.rb'  
+          Echoe.silence do
+            puts "Setting up test environment"
+            system("ruby test/setup.rb")
           end
         end
-      end      
+        begin
+          test = Rake::Task[:test_inner]        
+          if test.respond_to? :already_invoked=
+            # Method provided by MultiRails
+            test.already_invoked = false
+          end
+          test.invoke
+        ensure        
+          if File.exist? 'test/teardown.rb'        
+            Echoe.silence do 
+              puts "Tearing down test environment"
+              system("ruby test/teardown.rb")
+            end
+          end
+        end      
+      end
+      
     end
   
     task :default => :test
