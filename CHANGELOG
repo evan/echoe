@@ -1,4 +1,6 @@
 
+v2.7.10. Include RDoc options in generated gemspec (Rob McKinnon).
+
 v2.7.9. Fix redefine task helper for new Rake.
 
 v2.7.8. Better default test pattern.

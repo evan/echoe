@@ -296,6 +296,8 @@ class Echoe
       s.required_ruby_version = ruby_version
       s.required_rubygems_version = rubygems_version if rubygems_version
       s.platform = platform
+      s.rdoc_options = rdoc_options
+      s.extra_rdoc_files = rdoc_pattern
 
       if private_key and File.exist? private_key
         s.signing_key = private_key
