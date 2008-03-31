@@ -1,7 +1,39 @@
 
-module Gem
+### Platform check regexes
 
-  # Overrides for cross packaging, which Rubygems 0.9.5 doesn't do
+module Platform
+  def self.windows?
+    @windows ||= RUBY_PLATFORM =~ /djgpp|(cyg|ms|bcc)win|mingw/
+    !@windows.nil?
+  end
+
+  def self.gcc?
+    @gcc ||= RUBY_PLATFORM =~ /mingw/
+    !@gcc.nil?
+  end
+
+  def self.msvc?
+    @msvc ||= RUBY_PLATFORM =~ /mswin/
+    !@msvc.nil?
+  end
+  
+  def self.java?
+    @java ||= RUBY_PLATFORM =~ /java/
+    !@java.nil?
+  end
+  
+  def self.rake
+    windows? ? 'rake.bat' : 'rake'
+  end
+  
+  def self.make
+    msvc? ? 'nmake' : 'make'
+  end
+end
+
+### Overrides for cross packaging, which Rubygems 0.9.5 doesn't do
+
+module Gem
   class Specification
 
     alias :old_validate :validate    
@@ -22,6 +54,8 @@ module Gem
     
   end
 end
+
+### Some runtime Echoe hacks
 
 $platform = "ruby" # or Gem::PLATFORM::RUBY maybe
 
