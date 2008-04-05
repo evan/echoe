@@ -405,7 +405,7 @@ class Echoe
 
     desc 'Uninstall the gem'
     task :uninstall do
-      system "#{'sudo' if use_sudo} gem uninstall #{name} -a -i -x"
+      system "#{'sudo' if use_sudo} gem uninstall #{name} -a -I -x"
     end
 
     desc 'Package and upload the release to Rubyforge'
