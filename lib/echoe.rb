@@ -449,6 +449,7 @@ class Echoe
     
     if extension_pattern.any?
     
+      desc "Compile the binary extension module"
       task :compile => [:lib] do    
         extension_pattern.each do |extension|          
           ext_dir = File.dirname(extension)
