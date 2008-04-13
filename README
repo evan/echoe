@@ -1,5 +1,5 @@
 
-Echoe is a simple tool for working with Rubygems. It generates Rake tasks for documentation, extension compiling, testing, packaging, and deployment.
+A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment.
 
 == License
 
