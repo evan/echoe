@@ -79,6 +79,12 @@ For example, on JRuby, <tt>rake package</tt> will build a generic <tt>-ruby</tt>
 
 This way you can run <tt>rake java package</tt>, <tt>rake aix install</tt>, or whatever task you need and Echoe will behave just like you're packaging from within the target platform.
 
+== Test environment setup and teardown
+
+For some applications, you may need to setup and teardown environment state for the entire test suite. This is especially common for integration tests that may need to spawn an external daemon. To support this, you can add a file <tt>tests/setup.rb</tt> and it will be silently executed before the entire suite runs. Add a similar file <tt>tests/teardown.rb</tt> in your app to be executed at the end of the entire run.
+
+Note; these files will only get executed if you run the tests via <tt>rake</tt>. Also, you can set the environment variable <tt>VERBOSE=1</tt> to not hide the setup/teardown output.
+
 == Accessor options
 
 Descriptive options:
