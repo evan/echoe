@@ -1,4 +1,6 @@
 
+v2.7.12. Respect system EDITOR setting (osteele).
+
 v2.7.11. Include Platform module for abstracting RUBY_PLATFORM regex checks (luislavena).
 
 v2.7.10. Include RDoc options in generated gemspec (Rob McKinnon).

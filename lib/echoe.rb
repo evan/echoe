@@ -558,8 +558,9 @@ class Echoe
         end
       end
       
-      begin        
-        system("nano #{filename}") or raise "Editor returned an error"
+      begin      
+        editor = ENV['EDITOR'] || 'nano'  
+        system("#{editor} #{filename}") or raise "Editor '#{editor}' failed to start"
         puts File.open(filename).read
       end while !agree "Done editing? "
       
