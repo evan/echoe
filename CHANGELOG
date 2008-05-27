@@ -1,5 +1,5 @@
 
-v2.7.13. Rubyforge 1.0.0 compatibility.
+v2.7.13. Avoid Rubyforge 1.0.0 which seems broken.
 
 v2.7.12. Respect system EDITOR setting (osteele).
 

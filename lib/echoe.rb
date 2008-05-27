@@ -1,7 +1,7 @@
 
 require 'rubygems'
 
-gem 'rubyforge', '>=1'
+gem 'rubyforge', '=0.4.5'
 require 'rubyforge'
 
 require 'rake'
@@ -20,6 +20,7 @@ rescue LoadError
 end
 
 begin
+  gem 'hoe', '<= 1.5.0'
   require 'load_multi_rails_rake_tasks'
 rescue LoadError
 end
@@ -427,15 +428,8 @@ class Echoe
         pkg_zip = pkg + ".zip" 
         
         rf = RubyForge.new
-
-        begin
-          puts "Logging in"
-          rf.login
-        rescue NoMethodError
-          # Rubyforge 1.0.0 can't upgrade its old configurations
-          puts "Rubyforge gem error. Please re-run 'rubyforge setup'."
-          exit!
-        end
+        puts "Logging in"
+        rf.login
   
         c = rf.userconfig
         c["release_notes"] = description if description
