@@ -1,5 +1,9 @@
 
 require 'rubygems'
+
+gem 'rubyforge', '>=1'
+require 'rubyforge'
+
 require 'rake'
 require 'rake/clean'
 require 'rake/contrib/sshpublisher'
@@ -19,9 +23,6 @@ begin
   require 'load_multi_rails_rake_tasks'
 rescue LoadError
 end
-
-gem 'rubyforge', '>=0.4.0'
-require 'rubyforge'
 
 $LOAD_PATH << File.dirname(__FILE__)
 require 'echoe/platform'
@@ -426,8 +427,15 @@ class Echoe
         pkg_zip = pkg + ".zip" 
         
         rf = RubyForge.new
-        puts "Logging in"
-        rf.login
+
+        begin
+          puts "Logging in"
+          rf.login
+        rescue NoMethodError
+          # Rubyforge 1.0.0 can't upgrade its old configurations
+          puts "Rubyforge gem error. Please re-run 'rubyforge setup'."
+          exit!
+        end
   
         c = rf.userconfig
         c["release_notes"] = description if description
