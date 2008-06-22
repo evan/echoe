@@ -436,7 +436,7 @@ class Echoe
         pkg_tar_gz = pkg + ".tar.gz"
         pkg_zip = pkg + ".zip" 
         
-        rf = RubyForge.new
+        rf = RubyForge.new.configure        
         puts "Logging in"
         rf.login
   
@@ -581,7 +581,7 @@ class Echoe
         
         body = File.open(filename).readlines.reject { |line| line =~ /Subject: / }.join.gsub("\n\n\n", "\n\n")
         
-        rf = RubyForge.new
+        rf = RubyForge.new.configure        
         rf.login
         rf.post_news(project, subject, body)
         puts "Published."

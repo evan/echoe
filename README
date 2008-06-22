@@ -24,7 +24,12 @@ If you use this software, please {make a donation}[http://blog.evanweaver.com/do
 
 == Installation
 
+Install the gem:
   sudo gem install echoe
+  
+If you haven't already, make sure Rubyforge is configured locally and your password is correctly set:
+  rubyforge setup
+  rubyforge config
 
 == Project configuration
 
@@ -57,9 +62,7 @@ More advanced configuration is described in the Echoe class.
 
 == Deploying your gem
 
-First, run <tt>rubyforge setup</tt> and <tt>rubyforge config</tt> if you haven't already. Make sure your Rubyforge password is correctly set.
-
-Now, to deploy the gem and documentation:
+To deploy the gem and documentation:
 
   rake manifest
   rake release
