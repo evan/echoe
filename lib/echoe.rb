@@ -1,7 +1,6 @@
 
 require 'rubygems'
 
-gem 'rubyforge', '=0.4.5'
 require 'rubyforge'
 
 require 'rake'
@@ -20,7 +19,6 @@ rescue LoadError
 end
 
 begin
-  gem 'hoe', '<= 1.5.0'
   require 'load_multi_rails_rake_tasks'
 rescue LoadError
 end
@@ -42,7 +40,7 @@ For example, a simple <tt>Rakefile</tt> might look like this:
     p.summary = "A library that uncapitalizes strings. It's awesome."
     p.url = "http://www.uncapitalizer.com"
     p.docs_host = "uncapitalizer.com:~/www/files/doc/"
-    p.dependencies = ["string_tools >=1.4.0"]
+    p.runtime_dependencies = ["string_tools >=1.4.0"]
   end
   
 See below for the full list.
@@ -69,9 +67,9 @@ Note that you can also set the key and certificate locations in the Rakefile its
   
 == Metadependencies
 
-Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that, along with a comment containing the original <tt>Rakefile</tt> source. Downstream repackagers can use the <tt>gemspec</tt> as-is to build new versions of your gem. This way no dependencies are added, but no contents are lost.
+Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that. Downstream repackagers can use the <tt>gemspec</tt> as-is to build new versions of your gem even without Echoe. 
 
-If you do want metadependencies, add <tt>'echoe'</tt> to the <tt>p.dependencies</tt> array, and set <tt>p.include_rakefile = true</tt> and <tt>p.include_gemspec = false</tt>.
+However, Echoe is added to the <tt>development_dependencies</tt> array so that users can automatically install it via <tt>gem install --development</tt> if they prefer.
 
 == Cross-packaging
 
@@ -105,7 +103,8 @@ Versioning options:
 
 Common packaging options:
 
-* <tt>dependencies</tt> - An array of dependencies for this gem. For example, <tt>['mongrel', 'rake >=0.7.1']</tt>.
+* <tt>runtime_dependencies</tt> - An array of runtime dependencies for this gem. For example, <tt>['mongrel', 'activesupport >= 2.0.2']</tt>.
+* <tt>development_dependencies</tt> - An array of development dependencies for this gem. For example, <tt>['rake >=0.7.1']</tt>.
 * <tt>extension_pattern</tt> - A filename array, glob array, or regex for extension files that need to be run at install time. Defaults to <tt>"ext/**/extconf.rb"</tt>.
 
 Testing options:
@@ -121,7 +120,7 @@ Uncommon packaging options:
 * <tt>need_tar_gz</tt> - Whether to generate a <tt>.tar.gz</tt> package. Defaults to <tt>true</tt>.
 * <tt>need_tgz</tt> - Whether to generate a <tt>.tgz</tt> package. Defaults to <tt>false</tt>.
 * <tt>need_zip</tt> - Whether to generate a <tt>.zip</tt> package. Defaults to <tt>false</tt>.
-* <tt>include_rakefile</tt> - Include the Rakefile directly within the package. Defaults to <tt>false</tt>.
+* <tt>include_rakefile</tt> - Include the Rakefile directly within the package. Defaults to <tt>true</tt>.
 * <tt>include_gemspec</tt> - Include the generated gemspec file within the package. Defaults to <tt>true</tt>.
 * <tt>ruby_version</tt> - Version string for which Ruby to require (for example, <tt>'>= 1.8.4'</tt>.
 * <tt>eval</tt> - Accepts a proc to be evaluated in the context of the Gem::Specification object. This allows you to set more unusual gemspec options.
@@ -149,13 +148,13 @@ Documentation options:
 class Echoe
 
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options
   
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo
   
   # legacy
-  attr_accessor :extra_deps, :rdoc_files, :extensions
+  attr_accessor :extra_deps, :rdoc_files, :extensions, :dependencies
   
   def initialize(name, _version = nil)
     # Defaults
@@ -196,7 +195,8 @@ class Echoe
     readme = Dir['*'].detect { |filename| filename =~ /^readme/i }
     self.rdoc_options += ['--main', readme] if readme
       
-    self.dependencies = []
+    self.runtime_dependencies = []
+    self.development_dependencies = ["echoe"]
     self.manifest_name = "Manifest"
     self.extension_pattern = ["ext/**/extconf.rb", "ext/extconf.rb"]
     self.private_key = ENV['GEM_PRIVATE_KEY']
@@ -209,14 +209,16 @@ class Echoe
     self.need_zip = false
     self.platform = $platform
 
-    self.include_rakefile = false
+    self.include_rakefile = true
     self.include_gemspec = true    
     self.gemspec_name = "#{name}.gemspec"
+    self.rubygems_version = "1.2"
 
     yield self if block_given?
 
     # legacy compatibility
-    self.dependencies = extra_deps if extra_deps and dependencies.empty?
+    self.runtime_dependencies = dependencies if dependencies and runtime_dependencies.empty?
+    self.runtime_dependencies = extra_deps if extra_deps and runtime_dependencies.empty?
     self.project = rubyforge_name if rubyforge_name
     self.rdoc_pattern = rdoc_files if rdoc_files
     self.extension_pattern = extensions if extensions    
@@ -300,6 +302,7 @@ class Echoe
     self.spec = Gem::Specification.new do |s|
       s.name = name
       s.version = version
+      # s.specification_version = 3
       s.summary = summary
       s.author = Array(author).join(", ")
       s.email = email
@@ -318,9 +321,14 @@ class Echoe
         s.cert_chain = certificate_chain
       end
 
-      dependencies.each do |dep|
+      runtime_dependencies.each do |dep|
         dep = dep.split(" ") if dep.is_a? String
-        s.add_dependency(*dep)
+        s.add_runtime_dependency(*dep)
+      end
+
+      development_dependencies.each do |dep|
+        dep = dep.split(" ") if dep.is_a? String
+        s.add_development_dependency(*dep)
       end
 
       s.files = files
@@ -367,16 +375,10 @@ class Echoe
       if include_gemspec
         File.open(gemspec_name, 'w') do |f|          
           f.puts "\n# Gem::Specification for #{name.capitalize}-#{version}\n# Originally generated by Echoe\n\n"
-          spec.to_ruby.split("\n").each do |line|
+          spec.to_yaml.split("\n").each do |line|
             # Don't publish any information about the private key or certificate chain
             f.puts line unless line =~ /signing_key|cert_chain|\.pem/
-          end
-          
-          f.puts "\n\n# # Original Rakefile source (requires the Echoe gem):\n# \n"
-          File.open("Rakefile").readlines.each do |line|
-            # Ditto
-            f.write "# #{line}" unless line =~ /private_key|certificate_chain|\.pem/        
-          end                    
+          end          
         end
       end      
     end
@@ -409,6 +411,13 @@ class Echoe
     desc 'Install the gem'
     task :install => [:clean, :package, :uninstall] do
       system "#{'sudo' if use_sudo} gem install pkg/*.gem -P MediumSecurity --no-update-sources"
+    end
+    
+    namespace :install do
+      desc 'Install the gem including development dependencies'
+      task :development => [:clean, :package, :uninstall] do
+        system "#{'sudo' if use_sudo} gem install pkg/*.gem -P MediumSecurity --no-update-sources --development"
+      end
     end
 
     desc 'Uninstall the gem'
