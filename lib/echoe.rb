@@ -26,6 +26,7 @@ end
 $LOAD_PATH << File.dirname(__FILE__)
 require 'echoe/platform'
 require 'echoe/extensions'
+require 'echoe/client'
 
 =begin rdoc
 
@@ -624,6 +625,7 @@ class Echoe
       File.open(manifest_name, 'w').puts(files)
       
       (files | old_files).sort.each do |file|
+        next if file == gemspec_name
         sign = " "
         if old_files.include?(file) and !files.include?(file)
           sign = "-"
