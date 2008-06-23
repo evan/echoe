@@ -70,7 +70,7 @@ Note that you can also set the key and certificate locations in the Rakefile its
 
 Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that. Downstream repackagers can use the <tt>gemspec</tt> as-is to build new versions of your gem even without Echoe. 
 
-However, Echoe is added to the <tt>development_dependencies</tt> array so that users can automatically install it via <tt>gem install --development</tt> if they prefer.
+However, Echoe is added to the <tt>development_dependencies</tt> array so that users can automatically install it via <tt>gem install --development</tt> if they prefer. You can override this behavior by setting <tt>p.development_dependencies = []</tt>.
 
 == Cross-packaging
 
