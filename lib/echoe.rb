@@ -156,7 +156,7 @@ class Echoe
   
   # legacy
   attr_accessor :extra_deps, :rdoc_files, :extensions, :dependencies
-  
+
   def initialize(name, _version = nil)
     # Defaults
 
@@ -387,7 +387,7 @@ class Echoe
           when :ruby
             f.puts spec.to_ruby
           else
-            raise "Unknown gemspec format."
+            raise "Unknown gemspec format #{gemspec_format.inspect}. Supported formats: :ruby and :yaml"
           end
         end
       end      
