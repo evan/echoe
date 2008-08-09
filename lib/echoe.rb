@@ -291,6 +291,14 @@ class Echoe
         files.select do |file| 
           file =~ pattern
         end
+      when FileList
+        pattern.each do |ignorefile|
+          ignorefiles = File.open(ignorefile).to_a.map(&:chomp)
+          files = files.select do |file|
+            ignorefiles.map { |i| File.fnmatch(i, file) }.include?(true)
+          end
+        end
+        files
       else
         []
     end
