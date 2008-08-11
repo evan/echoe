@@ -8,7 +8,7 @@ authors:
 autorequire: 
 bindir: bin
 
-date: 2008-08-09 00:00:00 +02:00
+date: 2008-08-11 00:00:00 +02:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
@@ -89,7 +89,7 @@ required_ruby_version: !ruby/object:Gem::Requirement
   version: 
 required_rubygems_version: !ruby/object:Gem::Requirement 
   requirements: 
-  - - "="
+  - - ">="
     - !ruby/object:Gem::Version 
       version: "1.2"
   version: 
