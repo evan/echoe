@@ -213,7 +213,7 @@ class Echoe
     self.include_rakefile = true
     self.include_gemspec = true    
     self.gemspec_name = "#{name}.gemspec"
-    self.rubygems_version = "1.2"
+    self.rubygems_version = ">= 1.2"
 
     yield self if block_given?
 
