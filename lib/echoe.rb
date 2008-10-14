@@ -234,7 +234,7 @@ class Echoe
     rescue Errno::ENOENT
       unless ARGV.include? "manifest"
         puts "Missing manifest. You can build one with 'rake manifest'."
-        exit
+        exit 1
       else
         self.files = []
       end
