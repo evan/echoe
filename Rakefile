@@ -10,5 +10,6 @@ Echoe.new('echoe') do |p|
   p.runtime_dependencies = ['rake', 'rubyforge >=1.0.0', 'highline']
   p.development_dependencies = []
   p.require_signed = false
+  p.retain_gemspec = true
 end
 

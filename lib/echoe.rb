@@ -151,7 +151,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options, :gemspec_format
 
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo
 
   # legacy
   attr_accessor :extra_deps, :rdoc_files, :extensions, :dependencies
@@ -214,6 +214,8 @@ class Echoe
     self.include_rakefile = true
     self.include_gemspec = true
     self.gemspec_name = "#{name}.gemspec"
+    self.retain_gemspec = false
+    self.rakefile_name = "Rakefile"
     self.rubygems_version = ">= 1.2"
 
     yield self if block_given?
@@ -229,7 +231,7 @@ class Echoe
     begin
       self.files = File.read(manifest_name).split +
         [(gemspec_name if include_gemspec)] +
-        [("Rakefile" if include_rakefile)]
+        [(rakefile_name if include_rakefile)]
       self.files = files.compact.uniq
     rescue Errno::ENOENT
       unless ARGV.include? "manifest"
@@ -410,7 +412,7 @@ class Echoe
         system "rm pkg/*.gem"
       end
       # Remove the generated gemspec once the packaging is done, to discourage people from modifying it by hand.
-      if include_gemspec and File.exist? gemspec_name
+      if include_gemspec and File.exist? gemspec_name and not retain_gemspec
         File.delete gemspec_name
       end
 
@@ -629,11 +631,11 @@ class Echoe
         next unless file
         next if ignore_pattern.include?(file)
         next if File.directory?(file)
-        next if !include_rakefile and file == "Rakefile"
+        next if !include_rakefile and file == rakefile_name
         files << file
       end
 
-      files << "Rakefile" if include_rakefile
+      files << rakefile_name if include_rakefile
       files << manifest_name
       files.uniq!
 

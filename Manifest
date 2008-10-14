@@ -1,4 +1,5 @@
 CHANGELOG
+echoe.gemspec
 lib/echoe/client.rb
 lib/echoe/extensions.rb
 lib/echoe/platform.rb
