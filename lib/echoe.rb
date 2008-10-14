@@ -1,4 +1,3 @@
-
 require 'rubygems'
 
 require 'rubyforge'
@@ -14,7 +13,7 @@ require 'open-uri'
 require 'highline/import'
 
 begin
-  require 'rcov/rcovtask' 
+  require 'rcov/rcovtask'
 rescue LoadError
 end
 
@@ -35,7 +34,7 @@ Echoe includes some optional accessors for more advanced gem configuration.
 For example, a simple <tt>Rakefile</tt> might look like this:
 
   require 'echoe'
-  
+
   Echoe.new("uncapitalizer") do |p|
     p.author = "Evan Weaver"
     p.summary = "A library that uncapitalizes strings. It's awesome."
@@ -43,7 +42,7 @@ For example, a simple <tt>Rakefile</tt> might look like this:
     p.docs_host = "uncapitalizer.com:~/www/files/doc/"
     p.runtime_dependencies = ["string_tools >=1.4.0"]
   end
-  
+
 See below for the full list.
 
 == Signing gems
@@ -60,21 +59,21 @@ Make sure your environment is up-to-date:
 
 Upload your <tt>public_cert.pem</tt> file to your website or Rubyforge project, and tell your users to add that certificate to their system via:
   gem cert --add /path/to/public_cert.pem
-  
+
 Finally, package and release your project as normal. Now users can install your gem via:
   sudo gem install gemname -P HighSecurity
 
 Note that you can also set the key and certificate locations in the Rakefile itself. Finally, you can add <tt>p.require_signed = true</tt> to your <tt>Rakefile</tt> so that you don't accidentally release an unsigned gem if your key is missing.
-  
+
 == Metadependencies
 
-Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that. Downstream repackagers can use the <tt>gemspec</tt> as-is to build new versions of your gem even without Echoe. 
+Echoe does not force packages to depend on Echoe itself. Instead, it generates a <tt>gemspec</tt> from your <tt>Rakefile</tt> and includes that. Downstream repackagers can use the <tt>gemspec</tt> as-is to build new versions of your gem even without Echoe.
 
 However, Echoe is added to the <tt>development_dependencies</tt> array so that users can automatically install it via <tt>gem install --development</tt> if they prefer. You can override this behavior by setting <tt>p.development_dependencies = []</tt>.
 
 == Cross-packaging
 
-Echoe supports platform Rake targets to allow you to cross-package your gems. Just write the spec assuming <tt>RUBY_PLATFORM</tt> will be what you need it to be for each architecture, and then invoke Rake with the platform name when you're cross-packaging. 
+Echoe supports platform Rake targets to allow you to cross-package your gems. Just write the spec assuming <tt>RUBY_PLATFORM</tt> will be what you need it to be for each architecture, and then invoke Rake with the platform name when you're cross-packaging.
 
 For example, on JRuby, <tt>rake package</tt> will build a generic <tt>-ruby</tt> type gem. But if you want to include a Java-specific extension, you can do one of two things. You can package from within JRuby by checking if <tt>RUBY_PLATFORM =~ /java/</tt> and setting <tt>p.platform = jruby</tt>, or you can run <tt>rake java package</tt>, which will set <tt>RUBY_PLATFORM</tt> and <tt>p.platform</tt> for you.
 
@@ -150,13 +149,13 @@ class Echoe
 
   # user-configurable
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options
-  
+
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo
-  
+
   # legacy
   attr_accessor :extra_deps, :rdoc_files, :extensions, :dependencies
-  
+
   def initialize(name, _version = nil)
     # Defaults
 
@@ -168,19 +167,19 @@ class Echoe
     self.email = ""
     self.clean_pattern = ["pkg", "doc", 'build/*', '**/coverage', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
     self.test_pattern = File.exist?("test/test_all.rb") ? "test/test_all.rb" : ['test/**/test_*.rb', 'test/**/*_test.rb']
-    self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/ 
-    
+    self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
+
     self.changelog_patterns = {
         :version => [
-            /^\s*v([\d\.]+)(\.|\s|$)/, 
+            /^\s*v([\d\.]+)(\.|\s|$)/,
             /\s*\*\s*([\d\.]+)\s*\*\s*$/
           ],
         :changes => [
-          /^\s*v([\d\.]+\. .*)/, 
+          /^\s*v([\d\.]+\. .*)/,
           /\*\s*[\d\.]+\s*\*\s*(.*)\*\s*[\d\.]+\s*\*$/m
         ]
       }
-      
+
     self.description = ""
     self.summary = ""
     self.install_message = nil
@@ -192,10 +191,10 @@ class Echoe
 
     title = (name.downcase == name ? name.capitalize : name)
     self.rdoc_options = ['--line-numbers', '--inline-source', '--title', title]
-    
+
     readme = Dir['*'].detect { |filename| filename =~ /^readme/i }
     self.rdoc_options += ['--main', readme] if readme
-      
+
     self.runtime_dependencies = []
     self.development_dependencies = ["echoe"]
     self.manifest_name = "Manifest"
@@ -206,12 +205,12 @@ class Echoe
 
     self.need_gem = true
     self.need_tar_gz = true
-    self.need_tgz = false    
+    self.need_tgz = false
     self.need_zip = false
     self.platform = $platform
 
     self.include_rakefile = true
-    self.include_gemspec = true    
+    self.include_gemspec = true
     self.gemspec_name = "#{name}.gemspec"
     self.rubygems_version = ">= 1.2"
 
@@ -222,25 +221,25 @@ class Echoe
     self.runtime_dependencies = extra_deps if extra_deps and runtime_dependencies.empty?
     self.project = rubyforge_name if rubyforge_name
     self.rdoc_pattern = rdoc_files if rdoc_files
-    self.extension_pattern = extensions if extensions    
+    self.extension_pattern = extensions if extensions
 
     # read manifest
     begin
-      self.files = File.read(manifest_name).split + 
-        [(gemspec_name if include_gemspec)] + 
+      self.files = File.read(manifest_name).split +
+        [(gemspec_name if include_gemspec)] +
         [("Rakefile" if include_rakefile)]
       self.files = files.compact.uniq
     rescue Errno::ENOENT
       unless ARGV.include? "manifest"
         puts "Missing manifest. You can build one with 'rake manifest'."
-        exit 
+        exit
       else
         self.files = []
       end
-    end  
-    
+    end
+
     # snag version and changeset
-    self.version ||= _version    
+    self.version ||= _version
     unless version
       if File.exist? changelog
         parsed = Array(changelog_patterns[:version]).map do |pattern|
@@ -263,8 +262,8 @@ class Echoe
       end.compact.first or ""
     else
       ""
-    end      
-    
+    end
+
     # set some post-defaults
     self.certificate_chain = Array(certificate_chain).map {|file| File.expand_path(file)}
     self.private_key = File.expand_path(private_key) if private_key
@@ -275,11 +274,11 @@ class Echoe
     self.ignore_pattern = apply_pattern(ignore_pattern)
     self.rdoc_pattern = apply_pattern(rdoc_pattern, files) - [manifest_name]
     self.executable_pattern = apply_pattern(executable_pattern, files)
-    self.test_pattern = apply_pattern(test_pattern)      
+    self.test_pattern = apply_pattern(test_pattern)
 
     define_tasks
   end
-  
+
   def apply_pattern(pattern, files = nil)
     files ||= Dir['**/**']
     case pattern
@@ -288,9 +287,17 @@ class Echoe
           Dir.glob(p)
         end.flatten)
       when Regexp
-        files.select do |file| 
+        files.select do |file|
           file =~ pattern
         end
+      when FileList
+        pattern.each do |ignorefile|
+          ignorefiles = File.open(ignorefile).to_a.map(&:chomp)
+          files = files.select do |file|
+            ignorefiles.map { |i| File.fnmatch(i, file) }.include?(true)
+          end
+        end
+        files
       else
         []
     end
@@ -299,7 +306,7 @@ class Echoe
   def define_tasks
 
     ### Packaging and Installing
-    
+
     self.spec = Gem::Specification.new do |s|
       s.name = name
       s.version = version
@@ -333,17 +340,17 @@ class Echoe
       end
 
       s.files = files
-      
+
       s.bindir = if executable_pattern.any?
         executable_pattern[0].split("/")[0]
       else
         "bin"
       end
-      
+
       s.executables = executable_pattern.map do |file|
         file[(s.bindir.length + 1)..-1]
       end
-      
+
       dirs = Dir['{lib,ext}']
       s.extensions = extension_pattern if extension_pattern.any?
       s.require_paths = dirs unless dirs.empty?
@@ -354,11 +361,11 @@ class Echoe
       else
         s.test_files = test_pattern
       end
-      
+
       if eval
         s.instance_eval &eval
       end
-      
+
     end
 
     self.lib_files = spec.files.grep(/^lib/)
@@ -370,26 +377,25 @@ class Echoe
       pkg.need_tar_gz = @need_tar_gz
       pkg.need_zip = @need_zip
     end
-        
+
     task :build_gemspec do
       # Construct the gemspec file, if needed.
       if include_gemspec
-        File.open(gemspec_name, 'w') do |f|          
-          f.puts "\n# Gem::Specification for #{name.capitalize}-#{version}\n# Originally generated by Echoe\n\n"
+        File.open(gemspec_name, 'w') do |f|
           spec.to_yaml.split("\n").each do |line|
             # Don't publish any information about the private key or certificate chain
             f.puts line unless line =~ /signing_key|cert_chain|\.pem/
-          end          
+          end
         end
-      end      
+      end
     end
-    
+
     # Chain it to the gemspec task prerequisite
-    task gemspec_name.to_sym => [:build_gemspec] 
-        
+    task gemspec_name.to_sym => [:build_gemspec]
+
     task :package do
       # Chain some cleanup tasks to the default :package task.
-      # Remove the gemfile if it wasn't actually requested. 
+      # Remove the gemfile if it wasn't actually requested.
       unless @need_gem
         puts "  Gem file not requested. Removed."
         system "rm pkg/*.gem"
@@ -398,7 +404,7 @@ class Echoe
       if include_gemspec and File.exist? gemspec_name
         File.delete gemspec_name
       end
-      
+
       # Test signing status
       if private_key and File.exist? private_key
         puts "Signing gem."
@@ -407,13 +413,13 @@ class Echoe
         puts "Private key not found; gem will not be signed."
       end
       puts "Targeting \"#{platform}\" platform."
-    end  
+    end
 
     desc 'Install the gem'
     task :install => [:clean, :package, :uninstall] do
       system "#{'sudo' if use_sudo} gem install pkg/*.gem -P MediumSecurity --no-update-sources"
     end
-    
+
     namespace :install do
       desc 'Install the gem including development dependencies'
       task :development => [:clean, :package, :uninstall] do
@@ -427,52 +433,52 @@ class Echoe
     end
 
     desc 'Package and upload the release to Rubyforge'
-    task :release => [:clean, :package] do |t|      
-      
+    task :release => [:clean, :package] do |t|
+
       say "\n"
-      if agree "Release #{name}-#{version} to Rubyforge? "      
+      if agree "Release #{name}-#{version} to Rubyforge? "
         pkg = "pkg/#{name}-#{version}"
         pkg_gem = pkg + ".gem"
         pkg_tar = pkg + ".tgz"
         pkg_tar_gz = pkg + ".tar.gz"
-        pkg_zip = pkg + ".zip" 
-        
-        rf = RubyForge.new.configure        
+        pkg_zip = pkg + ".zip"
+
+        rf = RubyForge.new.configure
         puts "Logging in"
         rf.login
-  
+
         c = rf.userconfig
         c["release_notes"] = description if description
         c["release_changes"] = changes if changes
         c["preformatted"] = false
-  
+
         files = [(@need_tgz ? pkg_tar : nil),
                   (@need_tar_gz ? pkg_tar_gz : nil),
                   (@need_zip ? pkg_zip : nil),
                   (@need_gem ? pkg_gem : nil)].compact
-  
+
         puts "Releasing #{name} v. #{version}"
         self.version = self.version.ljust(3)
-          
+
         rf.add_release project, name, version, *files
       end
-      
+
     end
-    
+
     ### Extension building
 
     task :lib do
       directory "lib"
     end
-    
+
     if extension_pattern.any?
-    
+
       desc "Compile the binary extension module"
-      task :compile => [:lib] do    
-        extension_pattern.each do |extension|          
+      task :compile => [:lib] do
+        extension_pattern.each do |extension|
           ext_dir = File.dirname(extension)
           lib_target = nil
-          Dir.chdir(ext_dir) do 
+          Dir.chdir(ext_dir) do
             ruby File.basename(extension)
             system(PLATFORM =~ /win32/ ? 'nmake' : 'make')
             lib_target = open('Makefile').readlines.grep(/target_prefix = /).first.split('=').last.chomp("\n").strip
@@ -484,35 +490,35 @@ class Echoe
           end
         end
       end
-      
+
       task :test => [:compile]
-      
+
     end
-    
+
     ### Cross-platform targets
-    
+
     Gem::Specification::PLATFORM_CROSS_TARGETS.each do |target|
-      task target do 
+      task target do
         reset_target target
       end
     end
-    
+
     ### Documentation
 
-    Rake::RDocTask.new(:docs) do |rd|      
+    Rake::RDocTask.new(:docs) do |rd|
       # rd.main = Dir['*'].detect {|f| f =~ /^readme/i}
       rd.options += Array(rdoc_options)
-      
-      rd.rdoc_dir = 'doc'      
+
+      rd.rdoc_dir = 'doc'
       rd.rdoc_files.push(*rdoc_pattern)
 
       if rdoc_template
-        rd.template = rdoc_template 
+        rd.template = rdoc_template
       elsif ENV['RDOC_TEMPLATE']
         rd.template = ENV['RDOC_TEMPLATE']
-      end      
+      end
     end
-        
+
     task :doc => [:redocs]
 
     desc "Publish documentation to #{docs_host ? "'#{docs_host}'" : "rubyforge"}"
@@ -522,10 +528,10 @@ class Echoe
       remote_dir_name = project
       remote_dir_name += "/#{name}" if project != name
 
-      unless docs_host  
+      unless docs_host
         config = YAML.load(File.read(File.expand_path("~/.rubyforge/user-config.yml")))
-        pub = Rake::SshDirPublisher.new "#{config["username"]}@rubyforge.org", 
-          "/var/www/gforge-projects/#{remote_dir_name}", 
+        pub = Rake::SshDirPublisher.new "#{config["username"]}@rubyforge.org",
+          "/var/www/gforge-projects/#{remote_dir_name}",
           local_dir
         if project != name then
           def pub.upload
@@ -539,29 +545,29 @@ class Echoe
             end
           end
         end
-        pub.upload        
+        pub.upload
       else
         # you may need ssh keys configured for this to work
         host, dir = docs_host.split(":")
         dir.chomp!("/")
-        
+
         # XXX too dangerous?
         cmd = "ssh #{host} 'rm -rf #{dir}/#{remote_dir_name}'"
         puts "Deleting existing docs: #{cmd}"
-        system(cmd) 
-        
+        system(cmd)
+
         cmd = "scp -qr #{local_dir} #{host}:#{dir}/#{remote_dir_name}"
         puts "Uploading: #{cmd}"
         system(cmd)
-      end      
+      end
     end
-        
+
     desc 'Generate a release announcement, edit it, and post it to Rubyforge.'
     task :announce do
-      
+
       filename = "/tmp/#{name}_#{version}_announcement.txt"
-      
-      if !File.exist?(filename) or agree "Overwrite existing announcement file? "        
+
+      if !File.exist?(filename) or agree "Overwrite existing announcement file? "
         File.open(filename, 'w') do |f|
           f.write "Subject: #{name.capitalize} #{version}\n\n"
           f.write "#{name.capitalize} has been updated to #{version}. #{name.capitalize} is #{summary.uncapitalize}\n\n"
@@ -569,27 +575,27 @@ class Echoe
           f.write "More information is available at #{url} .\n\n" unless url.empty?
         end
       end
-      
-      begin      
-        editor = ENV['EDITOR'] || 'nano'  
+
+      begin
+        editor = ENV['EDITOR'] || 'nano'
         system("#{editor} #{filename}") or raise "Editor '#{editor}' failed to start"
         puts File.open(filename).read
       end while !agree "Done editing? "
-      
+
       if agree "Publish announcement to Rubyforge? "
         File.open(filename).readlines.detect { |line| line =~ /Subject: (.*)/ }
         subject = $1 or raise "Subject line seems to have disappeared"
-        
+
         body = File.open(filename).readlines.reject { |line| line =~ /Subject: / }.join.gsub("\n\n\n", "\n\n")
-        
-        rf = RubyForge.new.configure        
+
+        rf = RubyForge.new.configure
         rf.login
         rf.post_news(project, subject, body)
         puts "Published."
         File.delete filename
       end
-    end    
-    
+    end
+
     ### Clean
 
     desc 'Clean up auto-generated files'
@@ -602,7 +608,7 @@ class Echoe
         end
       end
     end
-    
+
     ### Manifest
 
     desc "Build a Manifest list"
@@ -621,9 +627,9 @@ class Echoe
       files << "Rakefile" if include_rakefile
       files << manifest_name
       files.uniq!
-      
+
       File.open(manifest_name, 'w').puts(files)
-      
+
       (files | old_files).sort.each do |file|
         next if file == gemspec_name
         sign = " "
@@ -635,57 +641,57 @@ class Echoe
         puts "#{sign} #{file}"
       end
     end
-    
+
     task :build_manifest => :manifest
-  
+
     ### Testing
-    
+
     if test_pattern.any?
-  
+
       Rake::TestTask.new(:test_inner) do |t|
         t.libs = ['lib', 'ext', 'bin', 'test']
         t.test_files = test_pattern
         t.verbose = true
       end
-    
+
       desc "Run the test suite"
       task :test do
-        if File.exist? 'test/setup.rb'  
+        if File.exist? 'test/setup.rb'
           Echoe.silence do
             puts "Setting up test environment"
             system("ruby test/setup.rb")
           end
         end
         begin
-          test = Rake::Task[:test_inner]        
+          test = Rake::Task[:test_inner]
           if test.respond_to? :already_invoked=
             # Method provided by MultiRails
             test.already_invoked = false
           end
           test.invoke
-        ensure        
-          if File.exist? 'test/teardown.rb'        
-            Echoe.silence do 
+        ensure
+          if File.exist? 'test/teardown.rb'
+            Echoe.silence do
               puts "Tearing down test environment"
               system("ruby test/teardown.rb")
             end
           end
-        end      
+        end
       end
-      
+
     end
-  
+
     task :default => :test
-    
-    if defined? Rcov      
+
+    if defined? Rcov
       Rcov::RcovTask.new(:coverage) do |t|
         t.test_files = test_pattern
         t.rcov_opts << rcov_options if rcov_options
         t.verbose = true
-      end      
+      end
       task :rcov => :coverage
     end
-    
+
   end
 end
 
