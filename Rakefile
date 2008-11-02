@@ -9,7 +9,7 @@ Echoe.new('echoe') do |p|
   p.docs_host = 'blog.evanweaver.com:~/www/bax/public/files/doc/'
   p.runtime_dependencies = ['rake', 'rubyforge >=1.0.0', 'highline']
   p.development_dependencies = []
-  p.require_signed = false
   p.retain_gemspec = true
+  p.require_signed = true
 end
 
