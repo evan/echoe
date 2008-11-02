@@ -469,7 +469,7 @@ class Echoe
                   (@need_gem ? pkg_gem : nil)].compact
 
         puts "Releasing #{name} v. #{version}"
-        self.version = self.version.ljust(3)
+        self.version = self.version.to_s.ljust(3)
 
         rf.add_release project, name, version, *files
       end
