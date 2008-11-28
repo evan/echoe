@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
-  s.date = %q{2008-10-13}
+  s.date = %q{2008-11-29}
   s.description = %q{A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment.}
   s.email = %q{}
   s.extra_rdoc_files = ["CHANGELOG", "lib/echoe/client.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe.rb", "LICENSE", "README", "TODO"]
@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Echoe", "--main", "README"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{fauna}
-  s.rubygems_version = %q{1.3.0}
+  s.rubygems_version = %q{1.3.1}
   s.summary = %q{A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment.}
 
   if s.respond_to? :specification_version then

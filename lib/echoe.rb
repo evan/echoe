@@ -491,7 +491,7 @@ class Echoe
           lib_target = nil
           Dir.chdir(ext_dir) do
             ruby File.basename(extension)
-            system(PLATFORM =~ /win32/ ? 'nmake' : 'make')
+            system(RUBY_PLATFORM =~ /win32/ ? 'nmake' : 'make')
             lib_target = open('Makefile').readlines.grep(/target_prefix = /).first.split('=').last.chomp("\n").strip
           end
           Dir["#{ext_dir}/*.#{Config::CONFIG['DLEXT']}"].each do |file|
