@@ -195,7 +195,7 @@ class Echoe
     self.rdoc_options += ['--main', readme] if readme
 
     self.runtime_dependencies = []
-    self.development_dependencies = ["echoe"]
+    self.development_dependencies = [] # These appear to not work at all
     self.manifest_name = "Manifest"
     self.extension_pattern = ["ext/**/extconf.rb", "ext/extconf.rb"]
     self.private_key = ENV['GEM_PRIVATE_KEY']
