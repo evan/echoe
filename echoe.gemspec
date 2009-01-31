@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.date = %q{2009-01-31}
   s.description = %q{A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment.}
   s.email = %q{}
-  s.extra_rdoc_files = ["CHANGELOG", "lib/echoe/client.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe.rb", "LICENSE", "README", "TODO"]
-  s.files = ["CHANGELOG", "echoe.gemspec", "lib/echoe/client.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe.rb", "LICENSE", "Manifest", "MIT-LICENSE", "Rakefile", "README", "TODO"]
+  s.extra_rdoc_files = ["CHANGELOG", "lib/echoe/client.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb", "lib/echoe.rb", "LICENSE", "README", "TODO"]
+  s.files = ["CHANGELOG", "echoe.gemspec", "lib/echoe/client.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb", "lib/echoe.rb", "LICENSE", "Manifest", "MIT-LICENSE", "Rakefile", "README", "TODO"]
   s.has_rdoc = true
   s.homepage = %q{http://blog.evanweaver.com/files/doc/fauna/echoe/}
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Echoe", "--main", "README"]
