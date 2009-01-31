@@ -1,6 +1,7 @@
-require 'rubygems'
 
-require 'rubyforge'
+$HERE = File.dirname(__FILE__)
+require "#{$HERE}/echoe/platform"
+require "#{$HERE}/echoe/extensions"
 
 require 'rake'
 require 'rake/clean'
@@ -10,22 +11,17 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rbconfig'
 require 'open-uri'
+
+require 'rubygems'
+require "#{$HERE}/echoe/rubygems"
+
+require 'rubyforge'
+require "#{$HERE}/echoe/client"
+
 require 'highline/import'
 
-begin
-  require 'rcov/rcovtask'
-rescue LoadError
-end
-
-begin
-  require 'load_multi_rails_rake_tasks'
-rescue LoadError
-end
-
-$LOAD_PATH << File.dirname(__FILE__)
-require 'echoe/platform'
-require 'echoe/extensions'
-require 'echoe/client'
+begin; require 'rcov/rcovtask'; rescue LoadError; end
+begin; require 'load_multi_rails_rake_tasks'; rescue LoadError; end
 
 =begin rdoc
 
@@ -37,7 +33,7 @@ For example, a simple <tt>Rakefile</tt> might look like this:
 
   Echoe.new("uncapitalizer") do |p|
     p.author = "Evan Weaver"
-    p.summary = "A library that uncapitalizes strings. It's awesome."
+    p.summary = "A library that uncapitalizes strings."
     p.url = "http://www.uncapitalizer.com"
     p.docs_host = "uncapitalizer.com:~/www/files/doc/"
     p.runtime_dependencies = ["string_tools >=1.4.0"]
@@ -151,7 +147,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options, :gemspec_format
 
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo, :gem_bin
 
   # legacy
   attr_accessor :extra_deps, :rdoc_files, :extensions, :dependencies
@@ -165,7 +161,7 @@ class Echoe
     self.url = ""
     self.author = ""
     self.email = ""
-    self.clean_pattern = ["pkg", "doc", 'build/*', '**/coverage', '**/*.o', '**/*.so', '**/*.a', 'lib/*-*', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
+    self.clean_pattern = ["pkg", "doc", 'build/*', '**/coverage', '**/*.o', '**/*.so', '**/*.a', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
     self.test_pattern = File.exist?("test/test_all.rb") ? "test/test_all.rb" : ['test/**/test_*.rb', 'test/**/*_test.rb']
     self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
 
@@ -185,7 +181,8 @@ class Echoe
     self.install_message = nil
     self.executable_pattern = /^bin\//
     self.has_rdoc = true
-    self.use_sudo = RUBY_PLATFORM !~ /mswin32|cygwin/
+    self.use_sudo = !Platform.windows?
+    self.gem_bin = "gem#{Platform.suffix}"
     self.rcov_options = []
     self.rdoc_pattern = /^(lib|bin|tasks|ext)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
 
@@ -381,6 +378,13 @@ class Echoe
       pkg.need_tar_gz = @need_tar_gz
       pkg.need_zip = @need_zip
     end
+    
+    desc "Display Echoe's knowledge of your system"
+    task :details do
+      (self.instance_variables.sort - ['@spec']).each do |var|
+        puts "#{var}: #{instance_variable_get(var).inspect}"
+      end
+    end
 
     task :build_gemspec do
       # Construct the gemspec file, if needed.
@@ -428,19 +432,19 @@ class Echoe
 
     desc 'Install the gem'
     task :install => [:clean, :package, :uninstall] do
-      system "#{'sudo' if use_sudo} gem install pkg/*.gem -P MediumSecurity --no-update-sources"
+      system "#{'sudo' if use_sudo} #{gem_bin} install pkg/*.gem -P MediumSecurity --no-update-sources"
     end
 
     namespace :install do
       desc 'Install the gem including development dependencies'
       task :development => [:clean, :package, :uninstall] do
-        system "#{'sudo' if use_sudo} gem install pkg/*.gem -P MediumSecurity --no-update-sources --development"
+        system "#{'sudo' if use_sudo} #{gem_bin} install pkg/*.gem -P MediumSecurity --no-update-sources --development"
       end
     end
 
     desc 'Uninstall the gem'
     task :uninstall do
-      system "#{'sudo' if use_sudo} gem uninstall #{name} -a -I -x"
+      system "#{'sudo' if use_sudo} #{gem_bin} uninstall #{name} -a -I -x"
     end
 
     desc 'Package and upload the release to Rubyforge'

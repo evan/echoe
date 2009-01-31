@@ -1,3 +1,6 @@
+
+v3.1. Fix some bugs; become Ruby 1.9 compatible.
+
 v3.0.2. Support for alternative Rakefile naming.
 
 v3.0.1. Compatibility with Rubygems 1.3.
