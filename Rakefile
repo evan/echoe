@@ -1,5 +1,5 @@
-
-require 'lib/echoe'
+($:.unshift File.expand_path(File.join( File.dirname(__FILE__), 'lib' ))).uniq!
+require 'echoe'
 
 Echoe.new('echoe') do |p|
   p.project = 'fauna'
