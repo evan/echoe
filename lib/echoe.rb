@@ -6,7 +6,6 @@ end
 
 $HERE = File.dirname(__FILE__)
 require "#{$HERE}/echoe/platform"
-require "#{$HERE}/echoe/extensions"
 
 require 'rake'
 require 'rake/clean'
@@ -16,6 +15,8 @@ require 'rake/rdoctask'
 require 'rake/testtask'
 require 'rbconfig'
 require 'open-uri'
+
+require "#{$HERE}/echoe/extensions"
 
 require 'rubygems'
 require "#{$HERE}/echoe/rubygems"

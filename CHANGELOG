@@ -1,3 +1,5 @@
+v3.1.2. Small bugfix. Version bump to force GitHub to re-generate gem.
+
 v3.1.1. Remove Rake from the requirements and vendor it (due to Ruby 1.9.1's odd handling of Rake)
 
 v3.1. Fix some bugs; become Ruby 1.9 compatible.
