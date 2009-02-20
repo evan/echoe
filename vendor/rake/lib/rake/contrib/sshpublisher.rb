@@ -1,7 +1,3 @@
-#!/usr/bin/env ruby
-
-require 'rake/contrib/compositepublisher'
-
 module Rake
 
   # Publish an entire directory to an existing remote directory using
