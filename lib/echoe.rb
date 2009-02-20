@@ -1,15 +1,15 @@
-Dir[File.join(File.expand_path(File.join( File.dirname(__FILE__), '..', 'vendor' )), '*')].each do |gem|
-  if File.directory? gem
-    ($:.unshift File.join(gem, 'lib')).uniq!
-  end
-end
+#Dir[File.join(File.expand_path(File.join( File.dirname(__FILE__), '..', 'vendor' )), '*')].each do |gem|
+#  if File.directory? gem
+#    ($:.unshift File.join(gem, 'lib')).uniq!
+#  end
+#end
 
 $HERE = File.dirname(__FILE__)
 require "#{$HERE}/echoe/platform"
 
 require 'rake'
 require 'rake/clean'
-require 'rake/contrib/sshpublisher'
+require "#{$HERE}/../vendor/rake/lib/rake/contrib/sshpublisher"
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
