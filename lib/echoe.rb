@@ -386,7 +386,8 @@ class Echoe
         puts "#{var}: #{instance_variable_get(var).inspect}"
       end
     end
-
+    
+    desc "Builds the .gemspec"
     task :build_gemspec do
       # Construct the gemspec file, if needed.
       if include_gemspec
@@ -404,10 +405,14 @@ class Echoe
           end
         end
       end
+      puts "Gemspec generated"
     end
 
     # Chain it to the gemspec task prerequisite
     task gemspec_name.to_sym => [:build_gemspec]
+
+    desc "Generates manifest & gemspec in one go"
+    task :build => [:manifest, :build_gemspec]
 
     task :package do
       # Chain some cleanup tasks to the default :package task.
