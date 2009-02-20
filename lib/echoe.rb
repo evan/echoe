@@ -18,6 +18,7 @@ require 'rubygems/specification'
 require "#{$HERE}/echoe/rubygems"
 
 require 'rubyforge'
+require "#{$HERE}/echoe/net"
 require "#{$HERE}/echoe/client"
 
 require 'highline/import'
