@@ -228,7 +228,7 @@ class Echoe
 
     # read manifest
     begin
-      self.files = File.read(manifest_name).split +
+      self.files = File.readlines(manifest_name).map { |x| x.strip } +
         [(gemspec_name if include_gemspec)] +
         [(rakefile_name if include_rakefile)]
       self.files = files.compact.uniq
