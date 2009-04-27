@@ -257,14 +257,16 @@ class Echoe
       end
     end
 
-    self.changes = if File.exist? changelog
-      Array(changelog_patterns[:changes]).map do |pattern|
-        open(changelog) do |log|
-          log.read[pattern, 1]
-        end
-      end.compact.first or ""
-    else
-      ""
+    unless self.changes
+      self.changes = if File.exist? changelog
+        Array(changelog_patterns[:changes]).map do |pattern|
+          open(changelog) do |log|
+            log.read[pattern, 1]
+          end
+        end.compact.first or ""
+      else
+        ""
+      end
     end
 
     # set some post-defaults
@@ -593,7 +595,15 @@ class Echoe
         File.open(filename, 'w') do |f|
           f.write "Subject: #{name.capitalize} #{version}\n\n"
           f.write "#{name.capitalize} has been updated to #{version}. #{name.capitalize} is #{summary.uncapitalize}\n\n"
-          f.write "Changes in this version: #{changes.sub(/^\s*[\w\d\.]+\s+/, '').uncapitalize}\n\n" unless changes.empty?
+          unless changes.empty?
+            f.write "Changes in this version: "
+            if changes.include?("\n")
+              f.write(changes)
+            else
+              f.write(changes.sub(/^\s*[\w\d\.]+\s+/, '').uncapitalize)
+            end
+            f.write("\n\n")
+          end
           f.write "More information is available at #{url} .\n\n" unless url.empty?
         end
       end
