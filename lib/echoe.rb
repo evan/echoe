@@ -9,6 +9,10 @@ require "#{$HERE}/../vendor/rake/lib/rake/contrib/sshpublisher"
 require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/testtask'
+begin
+require 'spec/rake/spectask'
+rescue LoadError
+end
 require 'rbconfig'
 require 'open-uri'
 
@@ -109,6 +113,8 @@ Testing options:
 
 * <tt>clean_pattern</tt> - A filename array, glob array, or regex for files that should be removed when <tt>rake clean</tt> is run.
 * <tt>test_pattern</tt> - A filename array, glob array, or regex for test runners. Overridden by <tt>"test/test_all.rb"</tt>, if it exists.
+
+* <tt>spec_pattern</tt> - A filename array, glob array, or regex for test runners.
 * <tt>rcov_options</tt> - Any extra flags to pass to RCov when coverage reports are run.
 
 Uncommon packaging options:
@@ -146,7 +152,7 @@ Documentation options:
 class Echoe
 
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options, :gemspec_format
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :spec_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options, :gemspec_format
 
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo, :gem_bin
@@ -165,6 +171,7 @@ class Echoe
     self.email = ""
     self.clean_pattern = ["pkg", "doc", 'build/*', '**/coverage', '**/*.o', '**/*.so', '**/*.a', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
     self.test_pattern = File.exist?("test/test_all.rb") ? "test/test_all.rb" : ['test/**/test_*.rb', 'test/**/*_test.rb']
+    self.spec_pattern = "spec/**/*_spec.rb"
     self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
 
     self.changelog_patterns = {
@@ -280,6 +287,7 @@ class Echoe
     self.rdoc_pattern = apply_pattern(rdoc_pattern, files) - [manifest_name]
     self.executable_pattern = apply_pattern(executable_pattern, files)
     self.test_pattern = apply_pattern(test_pattern)
+    self.spec_pattern = apply_pattern(spec_pattern)
 
     define_tasks
   end
@@ -515,7 +523,8 @@ class Echoe
         end
       end
 
-      task :test => [:compile]
+      task :test => [:compile] if test_pattern.any?
+      task :spec => :compile if spec_pattern.any?
 
     end
 
@@ -712,6 +721,15 @@ class Echoe
       end
 
       task :default => :test
+    end
+
+    if spec_pattern.any?
+      desc "Run the spec suite"
+      Spec::Rake::SpecTask.new('spec') do |t|
+        t.spec_files = spec_pattern
+      end
+
+      task :default => :spec
     end
 
     if defined? Rcov
