@@ -711,9 +711,8 @@ class Echoe
         end
       end
 
+      task :default => :test
     end
-
-    task :default => :test
 
     if defined? Rcov
       Rcov::RcovTask.new(:coverage) do |t|
