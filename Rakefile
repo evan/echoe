@@ -10,6 +10,5 @@ Echoe.new('echoe') do |p|
   p.runtime_dependencies = ['rubyforge >=1.0.2', 'highline']
   p.development_dependencies = []
   p.retain_gemspec = true
-  p.require_signed = true
 end
 
