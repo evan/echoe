@@ -637,7 +637,7 @@ class Echoe
       puts "Building Manifest"
       old_files = files
       files = []
-      Dir['**/**'].each do |file|
+      Dir['**/**'].sort.each do |file|
         next unless file
         next if ignore_pattern.include?(file)
         next if File.directory?(file)

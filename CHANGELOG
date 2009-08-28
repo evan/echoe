@@ -1,3 +1,5 @@
+v3.2. Sort manifest; possibly other fixes.
+
 v3.1.1. Remove Rake/contrib from the gem requirements and vendor it. Fix some load paths on Ruby 1.9.
 
 v3.1. Fix some bugs; become Ruby 1.9 compatible.
