@@ -152,7 +152,7 @@ Documentation options:
 class Echoe
 
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :spec_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :changelog, :rcov_options, :gemspec_format
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :spec_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :require_paths, :changelog, :rcov_options, :gemspec_format
 
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo, :gem_bin
@@ -189,6 +189,7 @@ class Echoe
     self.summary = ""
     self.install_message = nil
     self.executable_pattern = /^bin\//
+    self.require_paths = nil
     self.has_rdoc = true
     self.use_sudo = !Platform.windows?
     self.gem_bin = "gem#{Platform.suffix}"
@@ -366,7 +367,11 @@ class Echoe
 
       dirs = Dir['{lib,ext}']
       s.extensions = extension_pattern if extension_pattern.any?
-      s.require_paths = dirs unless dirs.empty?
+      if require_paths
+        s.require_paths = require_paths
+      else
+        s.require_paths = dirs unless dirs.empty?
+      end
       s.has_rdoc = has_rdoc
 
       if File.exist? "test/test_all.rb"
