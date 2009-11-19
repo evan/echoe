@@ -21,10 +21,7 @@ require "#{$HERE}/echoe/extensions"
 require 'rubygems'
 require 'rubygems/specification'
 require "#{$HERE}/echoe/rubygems"
-
-require 'rubyforge'
-require "#{$HERE}/echoe/net"
-require "#{$HERE}/echoe/client"
+require 'rubygems_plugin'
 
 require 'highline/import'
 
@@ -139,7 +136,7 @@ Security options:
 
 Publishing options:
 
-* <tt>project</tt> - The name of the Rubyforge project to upload to. Defaults to the name of the gem.
+* <tt>project</tt> - The name of the Rubyforge project. Defaults to the name of the gem.
 * <tt>docs_host</tt> - A host and filesystem path to publish the documentation to. Defaults to the Rubyforge project.
 
 Documentation options:
@@ -464,37 +461,20 @@ class Echoe
       system "#{'sudo' if use_sudo} #{gem_bin} uninstall #{name} -a -I -x"
     end
 
-    desc 'Package and upload the release to Rubyforge'
+    desc 'Package and upload the release to Gemcutter'
     task :release => [:clean, :package] do |t|
 
       say "\n"
-      if agree "Release #{name}-#{version} to Rubyforge? "
+      if agree "Release #{name}-#{version} to Gemcutter? "
         pkg = "pkg/#{name}-#{version}"
         pkg_gem = pkg + ".gem"
         pkg_tar = pkg + ".tgz"
         pkg_tar_gz = pkg + ".tar.gz"
         pkg_zip = pkg + ".zip"
-
-        rf = RubyForge.new.configure
-        puts "Logging in"
-        rf.login
-
-        c = rf.userconfig
-        c["release_notes"] = description if description
-        c["release_changes"] = changes if changes
-        c["preformatted"] = false
-
-        files = [(@need_tgz ? pkg_tar : nil),
-                  (@need_tar_gz ? pkg_tar_gz : nil),
-                  (@need_zip ? pkg_zip : nil),
-                  (@need_gem ? pkg_gem : nil)].compact
-
+        
         puts "Releasing #{name} v. #{version}"
-        self.version = self.version.to_s.ljust(3)
-
-        rf.add_release project, name, version, *files
+        Gem::Commands::PushCommand.new.invoke(pkg_gem)
       end
-
     end
 
     ### Extension building

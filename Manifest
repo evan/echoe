@@ -7,9 +7,7 @@ Rakefile
 TODO
 echoe.gemspec
 lib/echoe.rb
-lib/echoe/client.rb
 lib/echoe/extensions.rb
-lib/echoe/net.rb
 lib/echoe/platform.rb
 lib/echoe/rubygems.rb
 vendor/rake/MIT-LICENSE

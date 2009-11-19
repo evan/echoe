@@ -7,7 +7,7 @@ Echoe.new('echoe') do |p|
   p.summary = 'A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment.'
   p.url = 'http://blog.evanweaver.com/files/doc/fauna/echoe/'
   p.docs_host = 'blog.evanweaver.com:~/www/bax/public/files/doc/'
-  p.runtime_dependencies = ['rubyforge >=1.0.2', 'highline']
+  p.runtime_dependencies = ['gemcutter', 'highline']
   p.development_dependencies = []
   p.retain_gemspec = true
 end

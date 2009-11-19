@@ -1,4 +1,6 @@
 
+v4.0. Use gemcutter. Dump Rubyforge.
+
 v3.2. Sort manifest.
 
 v3.1.3. Removing Evan's keychain so GitHub can build the gem. Version bump to force GitHub to re-generate gem.
