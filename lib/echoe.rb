@@ -1,6 +1,5 @@
 
 $HERE = File.dirname(__FILE__)
-require "#{$HERE}/echoe/platform"
 
 require 'rake'
 require 'rake/clean'
@@ -724,3 +723,4 @@ class Echoe
   end
 end
 
+require "#{$HERE}/echoe/platform"
