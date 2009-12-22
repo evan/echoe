@@ -1,4 +1,6 @@
 
+v4.1. Remove prompts until I can find a cursor library that's not GPL. Restore Rubyforge gem dependency, for the announce method.
+
 v4.0. Use gemcutter. Dump Rubyforge.
 
 v3.2. Sort manifest.

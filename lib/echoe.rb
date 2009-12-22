@@ -18,11 +18,10 @@ require 'open-uri'
 require "#{$HERE}/echoe/extensions"
 
 require 'rubygems'
+require 'rubyforge'
 require 'rubygems/specification'
 require "#{$HERE}/echoe/rubygems"
 require 'rubygems_plugin'
-
-require 'highline/import'
 
 begin; require 'rcov/rcovtask'; rescue LoadError; end
 begin; require 'load_multi_rails_rake_tasks'; rescue LoadError; end
@@ -462,18 +461,14 @@ class Echoe
 
     desc 'Package and upload the release to Gemcutter'
     task :release => [:clean, :package] do |t|
-
-      say "\n"
-      if agree "Release #{name}-#{version} to Gemcutter? "
-        pkg = "pkg/#{name}-#{version}"
-        pkg_gem = pkg + ".gem"
-        pkg_tar = pkg + ".tgz"
-        pkg_tar_gz = pkg + ".tar.gz"
-        pkg_zip = pkg + ".zip"
-        
-        puts "Releasing #{name} v. #{version}"
-        Gem::Commands::PushCommand.new.invoke(pkg_gem)
-      end
+      pkg = "pkg/#{name}-#{version}"
+      pkg_gem = pkg + ".gem"
+      pkg_tar = pkg + ".tgz"
+      pkg_tar_gz = pkg + ".tar.gz"
+      pkg_zip = pkg + ".zip"
+      
+      puts "Releasing #{name} v. #{version}  to Gemcutter."
+      Gem::Commands::PushCommand.new.invoke(pkg_gem)
     end
 
     ### Extension building
@@ -579,41 +574,40 @@ class Echoe
 
       filename = "/tmp/#{name}_#{version}_announcement.txt"
 
-      if !File.exist?(filename) or agree "Overwrite existing announcement file? "
-        File.open(filename, 'w') do |f|
-          f.write "Subject: #{name.capitalize} #{version}\n\n"
-          f.write "#{name.capitalize} has been updated to #{version}. #{name.capitalize} is #{summary.uncapitalize}\n\n"
-          unless changes.empty?
-            f.write "Changes in this version: "
-            if changes.include?("\n")
-              f.write(changes)
-            else
-              f.write(changes.sub(/^\s*[\w\d\.]+\s+/, '').uncapitalize)
-            end
-            f.write("\n\n")
+      if File.exist?(filename) 
+        puts "Announcement file already exists. Please delete #{filename.inspect} first."        
+        exit(1)
+      end
+      
+      File.open(filename, 'w') do |f|
+        f.write "Subject: #{name.capitalize} #{version}\n\n"
+        f.write "#{name.capitalize} has been updated to #{version}. #{name.capitalize} is #{summary.uncapitalize}\n\n"
+        unless changes.empty?
+          f.write "Changes in this version: "
+          if changes.include?("\n")
+            f.write(changes)
+          else
+            f.write(changes.sub(/^\s*[\w\d\.]+\s+/, '').uncapitalize)
           end
-          f.write "More information is available at #{url} .\n\n" unless url.empty?
+          f.write("\n\n")
         end
+        f.write "More information is available at #{url} .\n\n" unless url.empty?
       end
 
-      begin
-        editor = ENV['EDITOR'] || 'nano'
-        system("#{editor} #{filename}") or raise "Editor '#{editor}' failed to start"
-        puts File.open(filename).read
-      end while !agree "Done editing? "
+      editor = ENV['EDITOR'] || 'nano'
+      system("#{editor} #{filename}") or raise "Editor '#{editor}' failed to start"
+      puts File.open(filename).read
 
-      if agree "Publish announcement to Rubyforge? "
-        File.open(filename).readlines.detect { |line| line =~ /Subject: (.*)/ }
-        subject = $1 or raise "Subject line seems to have disappeared"
+      File.open(filename).readlines.detect { |line| line =~ /Subject: (.*)/ }
+      subject = $1 or raise "Subject line seems to have disappeared"
 
-        body = File.open(filename).readlines.reject { |line| line =~ /Subject: / }.join.gsub("\n\n\n", "\n\n")
+      body = File.open(filename).readlines.reject { |line| line =~ /Subject: / }.join.gsub("\n\n\n", "\n\n")
 
-        rf = RubyForge.new.configure
-        rf.login
-        rf.post_news(project, subject, body)
-        puts "Published."
-        File.delete filename
-      end
+      rf = RubyForge.new.configure
+      rf.login
+      rf.post_news(project, subject, body)
+      puts "Published announcement to Rubyforge."
+      File.delete filename
     end
 
     ### Clean
@@ -719,7 +713,6 @@ class Echoe
       end
       task :rcov => :coverage
     end
-
   end
 end
 
