@@ -167,8 +167,9 @@ class Echoe
     self.clean_pattern = ["pkg", "doc", 'build/*', '**/coverage', '**/*.o', '**/*.so', '**/*.a', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
     self.test_pattern = File.exist?("test/test_all.rb") ? "test/test_all.rb" : ['test/**/test_*.rb', 'test/**/*_test.rb']
     self.spec_pattern = "spec/**/*_spec.rb"
+    
     self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
-
+    
     self.changelog_patterns = {
         :version => [
             /^\s*v([\d\.]+)(\.|\s|$)/,
@@ -278,7 +279,10 @@ class Echoe
     self.summary = description if summary.empty?
     self.clean_pattern = apply_pattern(clean_pattern)
     self.extension_pattern = apply_pattern(extension_pattern, files)
+    
     self.ignore_pattern = apply_pattern(ignore_pattern)
+    honor_gitignore! if File.exist?(".git")
+    
     self.rdoc_pattern = apply_pattern(rdoc_pattern, files) - [manifest_name]
     self.executable_pattern = apply_pattern(executable_pattern, files)
     self.test_pattern = apply_pattern(test_pattern)
@@ -286,7 +290,22 @@ class Echoe
 
     define_tasks
   end
-
+  
+private
+  def honor_gitignore!
+    self.ignore_pattern += \
+      Dir["**/.gitignore"].inject([]) do |pattern,gitignore| 
+        pattern.concat \
+          File.readlines(gitignore).
+            map    { |line| line.strip }.
+            reject { |line| "" == line }.
+            map    { |glob| 
+              d = File.dirname(gitignore)
+              d == "." ? glob : File.join(d, glob)
+            }
+      end.flatten.uniq
+  end
+  
   def apply_pattern(pattern, files = nil)
     files ||= Dir['**/**']
     case pattern
