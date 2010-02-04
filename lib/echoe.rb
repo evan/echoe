@@ -469,7 +469,7 @@ private
 
     desc 'Install the gem'
     task :install => [:clean, :package, :uninstall] do
-      system "#{'sudo' if use_sudo} #{gem_bin} install pkg/*.gem -P MediumSecurity --no-update-sources"
+      system "#{'sudo' if use_sudo} #{gem_bin} install pkg/*.gem --no-update-sources #{'-P MediumSecurity' if private_key and File.exist?(private_key)}"
     end
 
     namespace :install do

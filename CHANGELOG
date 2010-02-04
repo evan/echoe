@@ -1,4 +1,6 @@
 
+v4.2. Allow custom requirements (TylerRick); take advantage of .git_ignore (greatseth); only use -P MediumSecurity on install if it is the packaging machine.
+
 v4.1. Remove prompts until I can find a cursor library that's not GPL. Restore Rubyforge gem dependency, for the announce method.
 
 v4.0. Use gemcutter. Dump Rubyforge.
