@@ -19,7 +19,9 @@ require "#{$HERE}/echoe/extensions"
 
 require 'rubygems'
 require 'rubyforge'
-require 'rubygems/specification'
+
+Echoe.silence { require 'rubygems/specification' }
+
 require "#{$HERE}/echoe/rubygems"
 require 'rubygems_plugin'
 
