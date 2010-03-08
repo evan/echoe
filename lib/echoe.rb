@@ -190,7 +190,7 @@ class Echoe
     self.executable_pattern = /^bin\//
     self.require_paths = nil
     self.has_rdoc = true
-    self.use_sudo = !Platform.windows?
+    self.use_sudo = !(Platform.windows? or ENV['GEM_HOME'].to_s.include?(ENV['USER'].to_s))
     self.gem_bin = "gem#{Platform.suffix}"
     self.rcov_options = []
     self.rdoc_pattern = /^(lib|bin|tasks|ext)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
