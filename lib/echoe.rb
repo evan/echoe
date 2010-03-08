@@ -175,8 +175,8 @@ class Echoe
     
     self.changelog_patterns = {
         :version => [
-            /^\s*v([\d\.]+)(\.|\s|$)/,
-            /\s*\*\s*([\d\.]+)\s*\*\s*$/
+            /^\s*v([\d\w\.]+)(\.|\s|$)/,
+            /\s*\*\s*([\d\w\.]+)\s*\*\s*$/
           ],
         :changes => [
           /^\s*v([\d\.]+\. .*)/,
@@ -495,7 +495,7 @@ private
       pkg_zip = pkg + ".zip"
       
       puts "Releasing #{name} v. #{version}  to Gemcutter."
-      Gem::Commands::PushCommand.new.invoke(pkg_gem)
+      system("gem push #{pkg_gem.inspect}")
     end
 
     ### Extension building
