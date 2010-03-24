@@ -599,7 +599,7 @@ private
     desc 'Generate a release announcement, edit it, and post it to Rubyforge.'
     task :announce do
 
-      filename = "/tmp/#{name}_#{version}_announcement.txt"
+      filename = "#{Dir.tmpdir}/#{name}_#{version}_announcement.txt"
 
       if File.exist?(filename) 
         puts "Announcement file already exists. Please delete #{filename.inspect} first."        

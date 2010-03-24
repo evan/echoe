@@ -14,8 +14,8 @@ class Echoe
   def self.silence
     if !ENV['VERBOSE']      
       stdout, stderr = $stdout.clone, $stderr.clone
-      $stdout.reopen(File.new('/tmp/stdout.echoe', 'w'))
-      $stderr.reopen(File.new('/tmp/stderr.echoe', 'w'))
+      $stdout.reopen(File.new("#{Dir.tmpdir}/stdout.echoe", 'w'))
+      $stderr.reopen(File.new("#{Dir.tmpdir}/tmp/stderr.echoe", 'w'))
       begin
         yield
       ensure
