@@ -23,7 +23,11 @@ require 'rubyforge'
 Echoe.silence { require 'rubygems/specification' }
 
 require "#{$HERE}/echoe/rubygems"
-require 'rubygems_plugin'
+begin
+  gem 'gemcutter'
+  require 'rubygems_plugin'
+rescue Gem::LoadError
+end
 
 begin; require 'rcov/rcovtask'; rescue LoadError; end
 begin; require 'load_multi_rails_rake_tasks'; rescue LoadError; end
@@ -723,7 +727,7 @@ private
       task :default => :test
     end
 
-    if spec_pattern.any?
+    if defined? Spec and spec_pattern.any?
       desc "Run the spec suite"
       Spec::Rake::SpecTask.new('spec') do |t|
         t.spec_files = spec_pattern
