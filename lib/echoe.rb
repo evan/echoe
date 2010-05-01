@@ -23,7 +23,11 @@ require 'rubyforge'
 Echoe.silence { require 'rubygems/specification' }
 
 require "#{$HERE}/echoe/rubygems"
-require 'rubygems_plugin'
+begin
+  gem 'gemcutter'
+  require 'rubygems_plugin'
+rescue Gem::LoadError
+end
 
 begin; require 'rcov/rcovtask'; rescue LoadError; end
 begin; require 'load_multi_rails_rake_tasks'; rescue LoadError; end
