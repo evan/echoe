@@ -723,7 +723,7 @@ private
       task :default => :test
     end
 
-    if spec_pattern.any?
+    if defined? Spec and spec_pattern.any?
       desc "Run the spec suite"
       Spec::Rake::SpecTask.new('spec') do |t|
         t.spec_files = spec_pattern
