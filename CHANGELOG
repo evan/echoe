@@ -1,3 +1,4 @@
+v4.3.1. Don't stop if gemcutter's plugin cannot be loaded, don't define RSpec tasks if RSpec is not present (Flameeyes). Use Dir.tmpdir. 
 
 v4.3. Don't use sudo if the GEM_HOME is local. Support prerelease gem versions.
 
