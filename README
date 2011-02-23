@@ -88,7 +88,7 @@ Testing:
 Upload:
 
 * <tt>publish_docs</tt> -  Publish documentation to the web.
-* <tt>release</tt> -  Package and upload the latest release to Rubyforge.
+* <tt>release</tt> -  Package and upload the latest release to rubygems.org.
 
 == Reporting problems
 
