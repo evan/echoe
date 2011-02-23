@@ -230,7 +230,7 @@ class Echoe
 
     self.docs_host ||= "git@github.com:#{self.project}/#{self.project}.github.com"
     if self.docs_host =~ /git@github.com/
-      self.url ||= "http://#{self.project}.github.com/#{(self.name + '/') if project != name}"
+      self.url ||= "http://#{self.project}.github.com/#{self.project}/#{(self.name + '/') if project != name}"
     end
 
     # legacy compatibility
