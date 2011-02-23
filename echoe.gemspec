@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{echoe}
-  s.version = "4.5"
+  s.version = "4.5.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.date = %q{2011-02-23}
   s.description = %q{A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment.}
   s.email = %q{}
-  s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README", "TODO", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb"]
-  s.files = ["CHANGELOG", "LICENSE", "MIT-LICENSE", "Manifest", "README", "Rakefile", "TODO", "echoe.gemspec", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb", "vendor/rake/MIT-LICENSE", "vendor/rake/lib/rake/contrib/compositepublisher.rb", "vendor/rake/lib/rake/contrib/ftptools.rb", "vendor/rake/lib/rake/contrib/publisher.rb", "vendor/rake/lib/rake/contrib/rubyforgepublisher.rb", "vendor/rake/lib/rake/contrib/sshpublisher.rb", "vendor/rake/lib/rake/contrib/sys.rb"]
+  s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb"]
+  s.files = ["CHANGELOG", "LICENSE", "MIT-LICENSE", "Manifest", "README", "Rakefile", "echoe.gemspec", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb", "vendor/rake/MIT-LICENSE", "vendor/rake/lib/rake/contrib/compositepublisher.rb", "vendor/rake/lib/rake/contrib/ftptools.rb", "vendor/rake/lib/rake/contrib/publisher.rb", "vendor/rake/lib/rake/contrib/rubyforgepublisher.rb", "vendor/rake/lib/rake/contrib/sshpublisher.rb", "vendor/rake/lib/rake/contrib/sys.rb"]
   s.homepage = %q{http://fauna.github.com/fauna/echoe/}
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Echoe", "--main", "README"]
   s.require_paths = ["lib"]

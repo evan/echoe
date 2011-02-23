@@ -579,8 +579,10 @@ private
             repository_name = docs_host.split("/").last
             Dir.chdir(repository_name) do
               project_dir_name = project
+              Dir.mkdir(project_dir_name) rescue nil
+
               project_dir_name += "/#{name}" if project != name
-              Dir.mkdir(name) rescue nil
+              Dir.mkdir(project_dir_name) rescue nil
 
               cmd = "rm -rf '#{project_dir_name}' && mv #{local_dir} '#{project_dir_name}'"
               puts("Moving docs into checkout: #{cmd}")
