@@ -156,7 +156,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :spec_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :require_paths, :changelog, :rcov_options, :gemspec_format
 
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :rubyforge_name, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo, :gem_bin
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo, :gem_bin
 
   # legacy
   attr_accessor :extra_deps, :rdoc_files, :extensions, :dependencies
@@ -236,7 +236,6 @@ class Echoe
     # legacy compatibility
     self.runtime_dependencies = dependencies if dependencies and runtime_dependencies.empty?
     self.runtime_dependencies = extra_deps if extra_deps and runtime_dependencies.empty?
-    self.project = rubyforge_name if rubyforge_name
     self.rdoc_pattern = rdoc_files if rdoc_files
     self.extension_pattern = extensions if extensions
 
