@@ -14,6 +14,7 @@ rescue LoadError
 end
 require 'rbconfig'
 require 'open-uri'
+require 'tmpdir'
 
 require "#{$HERE}/echoe/extensions"
 
@@ -43,8 +44,6 @@ For example, a simple <tt>Rakefile</tt> might look like this:
   Echoe.new("uncapitalizer") do |p|
     p.author = "Evan Weaver"
     p.summary = "A library that uncapitalizes strings."
-    p.url = "http://www.uncapitalizer.com"
-    p.docs_host = "uncapitalizer.com:~/www/files/doc/"
     p.runtime_dependencies = ["string_tools >=1.4.0"]
   end
 
@@ -96,7 +95,7 @@ Descriptive options:
 * <tt>email</tt> - Your email address.
 * <tt>description</tt> - A more detailed description of the library.
 * <tt>summary</tt> - A shorter description of the library.
-* <tt>url</tt> - A url for the library.
+* <tt>url</tt> - A url for the library. Defaults to generated RDoc on GitHub pages for the project.f
 * <tt>install_message</tt> - A message to display after the gem is installed.
 
 Versioning options:
@@ -142,7 +141,7 @@ Security options:
 Publishing options:
 
 * <tt>project</tt> - The name of the Rubyforge project. Defaults to the name of the gem.
-* <tt>docs_host</tt> - A host and filesystem path to publish the documentation to. Defaults to the Rubyforge project.
+* <tt>docs_host</tt> - A host and filesystem path to publish the documentation to. Defaults to GitHub pages for the project. SSH upload to an accessible static file host also works.
 
 Documentation options:
 
@@ -168,15 +167,14 @@ class Echoe
     self.name = name
     self.project = name.downcase
     self.changelog = "CHANGELOG"
-    self.url = ""
     self.author = ""
     self.email = ""
     self.clean_pattern = ["pkg", "doc", 'build/*', '**/coverage', '**/*.o', '**/*.so', '**/*.a', '**/*.log', "{ext,lib}/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/Makefile", "{ext,lib}/**/*.{bundle,so,obj,pdb,lib,def,exp}", "ext/**/Makefile", "pkg", "*.gem", ".config"]
     self.test_pattern = File.exist?("test/test_all.rb") ? "test/test_all.rb" : ['test/**/test_*.rb', 'test/**/*_test.rb']
     self.spec_pattern = "spec/**/*_spec.rb"
-    
+
     self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
-    
+
     self.changelog_patterns = {
         :version => [
             /^\s*v([\d\w\.]+)(\.|\s|$)/,
@@ -229,6 +227,11 @@ class Echoe
     self.rubygems_version = ">= 1.2"
 
     yield self if block_given?
+
+    self.docs_host ||= "git@github.com:#{self.project}/#{self.project}.github.com"
+    if self.docs_host =~ /git@github.com/
+      self.url ||= "http://#{self.project}.github.com/#{(self.name + '/') if project != name}"
+    end
 
     # legacy compatibility
     self.runtime_dependencies = dependencies if dependencies and runtime_dependencies.empty?
@@ -287,10 +290,10 @@ class Echoe
     self.summary = description if summary.empty?
     self.clean_pattern = apply_pattern(clean_pattern)
     self.extension_pattern = apply_pattern(extension_pattern, files)
-    
+
     self.ignore_pattern = apply_pattern(ignore_pattern)
     honor_gitignore! if File.exist?(".git")
-    
+
     self.rdoc_pattern = apply_pattern(rdoc_pattern, files) - [manifest_name]
     self.executable_pattern = apply_pattern(executable_pattern, files)
     self.test_pattern = apply_pattern(test_pattern)
@@ -298,22 +301,22 @@ class Echoe
 
     define_tasks
   end
-  
+
 private
   def honor_gitignore!
     self.ignore_pattern += \
-      Dir["**/.gitignore"].inject([]) do |pattern,gitignore| 
+      Dir["**/.gitignore"].inject([]) do |pattern,gitignore|
         pattern.concat \
           File.readlines(gitignore).
             map    { |line| line.strip }.
             reject { |line| "" == line }.
-            map    { |glob| 
+            map    { |glob|
               d = File.dirname(gitignore)
               d == "." ? glob : File.join(d, glob)
             }
       end.flatten.uniq
   end
-  
+
   def apply_pattern(pattern, files = nil)
     files ||= Dir['**/**']
     case pattern
@@ -416,25 +419,25 @@ private
       pkg.need_tar_gz = @need_tar_gz
       pkg.need_zip = @need_zip
     end
-    
+
     desc "Display Echoe's knowledge of your system"
     task :details do
       (self.instance_variables.sort - ['@spec']).each do |var|
         puts "#{var}: #{instance_variable_get(var).inspect}"
       end
     end
-    
+
     desc "Builds the .gemspec"
     task :build_gemspec do
       # Construct the gemspec file, if needed.
       if include_gemspec
-        File.open(gemspec_name, 'w') do |f|          
+        File.open(gemspec_name, 'w') do |f|
           case gemspec_format
           when :yaml
             spec.to_yaml.split("\n").each do |line|
               # Don't publish any information about the private key or certificate chain
               f.puts line unless line =~ /signing_key|cert_chain|\.pem/
-            end          
+            end
           when :ruby
             f.puts spec.to_ruby
           else
@@ -497,7 +500,7 @@ private
       pkg_tar = pkg + ".tgz"
       pkg_tar_gz = pkg + ".tar.gz"
       pkg_zip = pkg + ".zip"
-      
+
       puts "Releasing #{name} v. #{version}  to Gemcutter."
       system("gem push #{pkg_gem.inspect}")
     end
@@ -559,33 +562,43 @@ private
 
     task :doc => [:redocs]
 
-    desc "Publish documentation to #{docs_host ? "'#{docs_host}'" : "rubyforge"}"
+    desc "Publish documentation to the internet."
     task :publish_docs => [:clean, :docs] do
 
-      local_dir = 'doc'
-      remote_dir_name = project
-      remote_dir_name += "/#{name}" if project != name
+      local_dir = File.expand_path('doc')
 
-      unless docs_host
-        config = YAML.load(File.read(File.expand_path("~/.rubyforge/user-config.yml")))
-        pub = Rake::SshDirPublisher.new "#{config["username"]}@rubyforge.org",
-          "/var/www/gforge-projects/#{remote_dir_name}",
-          local_dir
-        if project != name then
-          def pub.upload
-            begin
-              super
-            rescue
-              # project directory probably doesn't exist, transfer as a whole
-              cmd = "scp -qr #{local_dir} #{host}:#{remote_dir}"
-              puts "Uploading: #{cmd}"
+      if docs_host =~ /git@github.com/
+        Dir.mktmpdir do |dir|
+          Dir.chdir(dir) do
+            puts "Working in: #{dir}"
+            cmd = "git clone #{docs_host}"
+            puts "Cloning existing docs: #{cmd}"
+            system(cmd)
+
+            repository_name = docs_host.split("/").last
+            Dir.chdir(repository_name) do
+              project_dir_name = project
+              project_dir_name += "/#{name}" if project != name
+              Dir.mkdir(name) rescue nil
+
+              cmd = "rm -rf '#{project_dir_name}' && mv #{local_dir} '#{project_dir_name}'"
+              puts("Moving docs into checkout: #{cmd}")
+              system(cmd)
+
+              cmd = "git add '#{project_dir_name}' && git commit -a -m 'Update documentation for #{name} #{version}'"
+              puts "Committing changes: #{cmd}"
+              system(cmd)
+
+              cmd = "git push"
+              puts "Pushing changes: #{cmd}"
               system(cmd)
             end
           end
         end
-        pub.upload
       else
         # you may need ssh keys configured for this to work
+        remote_dir_name = project
+        remote_dir_name += "/#{name}" if project != name
         host, dir = docs_host.split(":")
         dir.chomp!("/")
 
@@ -605,11 +618,11 @@ private
 
       filename = "#{Dir.tmpdir}/#{name}_#{version}_announcement.txt"
 
-      if File.exist?(filename) 
-        puts "Announcement file already exists. Please delete #{filename.inspect} first."        
+      if File.exist?(filename)
+        puts "Announcement file already exists. Please delete #{filename.inspect} first."
         exit(1)
       end
-      
+
       File.open(filename, 'w') do |f|
         f.write "Subject: #{name.capitalize} #{version}\n\n"
         f.write "#{name.capitalize} has been updated to #{version}. #{name.capitalize} is #{summary.uncapitalize}\n\n"
