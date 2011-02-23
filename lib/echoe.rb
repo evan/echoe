@@ -556,6 +556,8 @@ private
         rd.template = rdoc_template
       elsif ENV['RDOC_TEMPLATE']
         rd.template = ENV['RDOC_TEMPLATE']
+      elsif `allison --path`.any?
+        rd.template = `allison --path`.chomp
       end
     end
 

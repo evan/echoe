@@ -5,7 +5,7 @@ Echoe.new('echoe') do |p|
   p.project = 'fauna'
   p.author = 'Evan Weaver'
   p.summary = 'A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment.'
-  p.runtime_dependencies = ['gemcutter', 'rubyforge']
+  p.runtime_dependencies = ['gemcutter', 'rubyforge', 'allison']
   p.development_dependencies = []
   p.retain_gemspec = true
 end
