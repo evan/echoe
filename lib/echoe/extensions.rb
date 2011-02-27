@@ -3,6 +3,10 @@ class String #:nodoc:
   def uncapitalize #:nodoc:
     "#{self[0..0].downcase}#{self[1..-1]}"
   end
+
+  def any?
+    size > 0
+  end
 end
 
 class ::Rake::SshDirPublisher # :nodoc:
@@ -12,7 +16,7 @@ end
 class Echoe
 
   def self.silence
-    if !ENV['VERBOSE']      
+    if !ENV['VERBOSE']
       stdout, stderr = $stdout.clone, $stderr.clone
       $stdout.reopen(File.new("#{Dir.tmpdir}/stdout.echoe", 'w'))
       $stderr.reopen(File.new("#{Dir.tmpdir}/stderr.echoe", 'w'))
@@ -26,7 +30,7 @@ class Echoe
       yield
     end
   end
-  
+
 end
 
 # Redefine instead of chain a Rake task
