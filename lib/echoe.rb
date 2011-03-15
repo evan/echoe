@@ -494,15 +494,30 @@ private
 
     desc 'Package and upload the release to Gemcutter'
     task :release => [:clean, :package] do |t|
-      pkg = "pkg/#{name}-#{version}"
+      git_branch = nil
+      if (File.exist?(".git"))
+        git_branch = `git branch --no-color | egrep '^\\*' | awk '{print $2}'`.chomp
+        if (`git diff origin/#{git_branch}`).any?
+          puts "You need to commit and push your changes first."
+          exit(1)
+        end
+      end
+      tag = "#{name}-#{version}"
+      pkg = "pkg/#{tag}"
       pkg_gem = pkg + ".gem"
       pkg_tar = pkg + ".tgz"
       pkg_tar_gz = pkg + ".tar.gz"
       pkg_zip = pkg + ".zip"
 
       puts "Releasing #{name} v. #{version}  to Gemcutter."
-      system("gem push #{pkg_gem.inspect}")
-    end
+      if system("gem push #{pkg_gem.inspect}")
+        if git_branch
+          if system("git tag #{tag} && git push origin #{tag}")
+            puts "Tagged release as #{tag}"
+          end
+        end
+     end
+   end
 
     ### Extension building
 

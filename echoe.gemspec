@@ -2,12 +2,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{echoe}
-  s.version = "4.5.2"
+  s.version = "4.5.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
   s.cert_chain = ["/Users/eweaver/p/configuration/gem_certificates/evan_weaver-original-public_cert.pem"]
-  s.date = %q{2011-02-27}
+  s.date = %q{2011-03-15}
   s.description = %q{A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment.}
   s.email = %q{}
   s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb"]
