@@ -173,7 +173,7 @@ class Echoe
     self.test_pattern = File.exist?("test/test_all.rb") ? "test/test_all.rb" : ['test/**/test_*.rb', 'test/**/*_test.rb']
     self.spec_pattern = "spec/**/*_spec.rb"
 
-    self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
+    self.ignore_pattern = /^(pkg|doc)|(\.svn|CVS|\.bzr|\.DS|\.git)$/
 
     self.changelog_patterns = {
         :version => [
