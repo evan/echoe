@@ -173,7 +173,7 @@ class Echoe
     self.test_pattern = File.exist?("test/test_all.rb") ? "test/test_all.rb" : ['test/**/test_*.rb', 'test/**/*_test.rb']
     self.spec_pattern = "spec/**/*_spec.rb"
 
-    self.ignore_pattern = /^(pkg|doc)|\.svn|CVS|\.bzr|\.DS|\.git/
+    self.ignore_pattern = /^(pkg|doc)|(\.svn|CVS|\.bzr|\.DS|\.git)$/
 
     self.changelog_patterns = {
         :version => [
@@ -538,7 +538,11 @@ private
           Dir.chdir(ext_dir) do
             ruby File.basename(extension)
             system(RUBY_PLATFORM =~ /win32/ ? 'nmake' : 'make')
-            lib_target = open('Makefile').readlines.grep(/target_prefix = /).first.split('=').last.chomp("\n").strip
+            lib_target = if(target_prefix_line = open('Makefile').readlines.grep(/target_prefix = /).first)
+              target_prefix_line.split('=').last.chomp("\n").strip
+            else
+              ''
+            end
           end
           Dir["#{ext_dir}/*.#{Config::CONFIG['DLEXT']}"].each do |file|
             dir = "lib/#{lib_target}/".gsub('//', '/')
