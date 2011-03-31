@@ -492,8 +492,11 @@ private
       system "#{'sudo' if use_sudo} #{gem_bin} uninstall #{name} -a -I -x"
     end
 
+    desc 'Override this task to add prerelease checks'
+    task :prerelease
+
     desc 'Package and upload the release to Gemcutter'
-    task :release => [:clean, :package] do |t|
+    task :release => [:prerelease, :clean, :package] do |t|
       git_branch = nil
       if (File.exist?(".git"))
         git_branch = `git branch --no-color | egrep '^\\*' | awk '{print $2}'`.chomp
