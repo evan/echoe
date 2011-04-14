@@ -782,6 +782,12 @@ private
       end
       task :rcov => :coverage
     end
+
+    # Irb console
+    desc 'Start an irb session and load the library.'
+    task :console do
+      exec "irb -I lib -r #{name}" 
+    end
   end
 end
 
