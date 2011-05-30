@@ -3,10 +3,11 @@ $HERE = File.dirname(__FILE__)
 
 require 'rake'
 require 'rake/clean'
+require 'rake/dsl'
 require "#{$HERE}/../vendor/rake/lib/rake/contrib/compositepublisher"
 require "#{$HERE}/../vendor/rake/lib/rake/contrib/sshpublisher"
-require 'rake/gempackagetask'
-require 'rake/rdoctask'
+require 'rubygems/package_task'
+require 'rdoc/task'
 require 'rake/testtask'
 begin
 require 'spec/rake/spectask'
@@ -156,7 +157,7 @@ class Echoe
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :spec_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :require_paths, :changelog, :rcov_options, :gemspec_format
 
   # best left alone
-  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :has_rdoc, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo, :gem_bin
+  attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo, :gem_bin
 
   # legacy
   attr_accessor :extra_deps, :rdoc_files, :extensions, :dependencies
@@ -191,7 +192,6 @@ class Echoe
     self.install_message = nil
     self.executable_pattern = /^bin\//
     self.require_paths = nil
-    self.has_rdoc = true
     self.use_sudo = !(Platform.windows? or ENV['GEM_HOME'].to_s.include?(ENV['USER'].to_s))
     self.gem_bin = "gem#{Platform.suffix}"
     self.rcov_options = []
@@ -395,7 +395,6 @@ private
       else
         s.require_paths = dirs unless dirs.empty?
       end
-      s.has_rdoc = has_rdoc
 
       if File.exist? "test/test_all.rb"
         s.test_file = "test/test_all.rb"
@@ -413,7 +412,7 @@ private
     self.bin_files = spec.files.grep(/^bin/)
     self.test_files = spec.files.grep(/^test/)
 
-    Rake::GemPackageTask.new(spec) do |pkg|
+    Gem::PackageTask.new(spec) do |pkg|
       pkg.need_tar = @need_tgz
       pkg.need_tar_gz = @need_tar_gz
       pkg.need_zip = @need_zip
@@ -730,7 +729,6 @@ private
     ### Testing
 
     if test_pattern.any?
-
       Rake::TestTask.new(:test_inner) do |t|
         t.libs = ['lib', 'ext', 'bin', 'test']
         t.test_files = test_pattern
@@ -763,6 +761,10 @@ private
       end
 
       task :default => :test
+    else
+      task :default do
+        puts "Nothing to do."
+      end
     end
 
     if defined? Spec and spec_pattern.any?
