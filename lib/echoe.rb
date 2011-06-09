@@ -3,7 +3,6 @@ $HERE = File.dirname(__FILE__)
 
 require 'rake'
 require 'rake/clean'
-require 'rake/dsl'
 require "#{$HERE}/../vendor/rake/lib/rake/contrib/compositepublisher"
 require "#{$HERE}/../vendor/rake/lib/rake/contrib/sshpublisher"
 require 'rubygems/package_task'
@@ -152,6 +151,7 @@ Documentation options:
 =end
 
 class Echoe
+  include Rake::DSL
 
   # user-configurable
   attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :spec_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :require_paths, :changelog, :rcov_options, :gemspec_format
@@ -788,7 +788,7 @@ private
     # Irb console
     desc 'Start an irb session and load the library.'
     task :console do
-      exec "irb -I lib -r #{name}" 
+      exec "irb -I lib -r #{name}"
     end
   end
 end

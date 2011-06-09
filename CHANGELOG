@@ -1,3 +1,5 @@
+v4.6.1. Compatibility with Rake 0.9.2, which deprecated the API added in 0.9.0.
+
 v4.6.0. Compatibility with RubyGems 1.8.4 and Rake 0.9.0. Uncertain behavior on previous versions.
 
 v4.5.6. Add :prerelease task for user release checks.
