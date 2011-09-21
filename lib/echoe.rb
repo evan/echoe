@@ -351,7 +351,7 @@ private
       s.author = Array(author).join(", ")
       s.email = email
       s.homepage = url
-      s.rubyforge_project = project
+      s.rubyforge_project = project if project
       s.post_install_message = install_message if install_message
       s.description = description
       s.required_ruby_version = ruby_version
