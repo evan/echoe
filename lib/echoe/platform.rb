@@ -23,7 +23,8 @@ module Echoe::Platform
   end
 
   def self.suffix
-    @suffix ||= Gem.default_exec_format[2..-1]
+    Gem.default_exec_format =~ /%s(.*)/
+    @suffix ||= $1
   end
 
   def self.rake

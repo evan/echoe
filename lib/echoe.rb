@@ -8,16 +8,15 @@ require "#{$HERE}/../vendor/rake/lib/rake/contrib/sshpublisher"
 require 'rubygems/package_task'
 require 'rdoc/task'
 require 'rake/testtask'
-begin
-require 'spec/rake/spectask'
-rescue LoadError
-end
+begin; require 'spec/rake/spectask'; rescue LoadError; end
+
 require 'rbconfig'
 require 'open-uri'
 require 'tmpdir'
 
 require "#{$HERE}/echoe/extensions"
 
+begin; require 'psych'; rescue LoadError; end
 require 'rubygems'
 require 'rubyforge'
 

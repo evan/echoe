@@ -1,3 +1,7 @@
+v4.6.3. Better JRuby compatibility.
+
+v4.6.2. Require 'psych' if you have it, to fix Rubygems bug.
+
 v4.6.1. Compatibility with Rake 0.9.2, which deprecated the API added in 0.9.0.
 
 v4.6.0. Compatibility with RubyGems 1.8.4 and Rake 0.9.0. Uncertain behavior on previous versions.
