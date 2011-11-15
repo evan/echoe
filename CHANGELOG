@@ -1,3 +1,5 @@
+v4.6.4. Compatibility hack for pre-Darkfish RDoc templates.
+
 v4.6.3. Better JRuby compatibility.
 
 v4.6.2. Require 'psych' if you have it, to fix Rubygems bug.

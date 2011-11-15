@@ -199,7 +199,7 @@ class Echoe
     self.gemspec_format = :ruby
 
     title = (name.downcase == name ? name.capitalize : name)
-    self.rdoc_options = ['--line-numbers', '--inline-source', '--title', title]
+    self.rdoc_options = ['--line-numbers', '--title', title]
 
     readme = Dir['*'].detect { |filename| filename =~ /^readme/i }
     self.rdoc_options += ['--main', readme] if readme
@@ -577,7 +577,7 @@ private
       elsif ENV['RDOC_TEMPLATE']
         rd.template = ENV['RDOC_TEMPLATE']
       elsif `allison --path`.any?
-        rd.template = `allison --path`.chomp
+        rd.template = `allison --path`.chomp + ".rb"
       end
     end
 

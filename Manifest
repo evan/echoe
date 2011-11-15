@@ -2,7 +2,7 @@ CHANGELOG
 LICENSE
 MIT-LICENSE
 Manifest
-README
+README.rdoc
 Rakefile
 echoe.gemspec
 lib/echoe.rb
