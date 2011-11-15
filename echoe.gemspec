@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.email = %q{}
   s.extra_rdoc_files = [%q{CHANGELOG}, %q{LICENSE}, %q{README}, %q{lib/echoe.rb}, %q{lib/echoe/extensions.rb}, %q{lib/echoe/platform.rb}, %q{lib/echoe/rubygems.rb}]
   s.files = [%q{CHANGELOG}, %q{LICENSE}, %q{MIT-LICENSE}, %q{Manifest}, %q{README}, %q{Rakefile}, %q{echoe.gemspec}, %q{lib/echoe.rb}, %q{lib/echoe/extensions.rb}, %q{lib/echoe/platform.rb}, %q{lib/echoe/rubygems.rb}, %q{vendor/rake/MIT-LICENSE}, %q{vendor/rake/lib/rake/contrib/compositepublisher.rb}, %q{vendor/rake/lib/rake/contrib/ftptools.rb}, %q{vendor/rake/lib/rake/contrib/publisher.rb}, %q{vendor/rake/lib/rake/contrib/rubyforgepublisher.rb}, %q{vendor/rake/lib/rake/contrib/sshpublisher.rb}, %q{vendor/rake/lib/rake/contrib/sys.rb}]
-  s.homepage = %q{http://fauna.github.com/fauna/echoe/}
+  s.homepage = %q{http://github.com/evan/echoe/}
   s.rdoc_options = [%q{--line-numbers}, %q{--inline-source}, %q{--title}, %q{Echoe}, %q{--main}, %q{README}]
   s.require_paths = [%q{lib}]
   s.rubyforge_project = %q{fauna}
