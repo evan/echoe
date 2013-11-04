@@ -23,11 +23,6 @@ require 'rubyforge'
 Echoe.silence { require 'rubygems/specification' }
 
 require "#{$HERE}/echoe/rubygems"
-begin
-  gem 'gemcutter'
-  require 'rubygems_plugin'
-rescue Gem::LoadError
-end
 
 begin; require 'rcov/rcovtask'; rescue LoadError; end
 begin; require 'load_multi_rails_rake_tasks'; rescue LoadError; end
@@ -498,7 +493,8 @@ private
       git_branch = nil
       if (File.exist?(".git"))
         git_branch = `git branch --no-color | egrep '^\\*' | awk '{print $2}'`.chomp
-        if (`git diff origin/#{git_branch}`).any?
+        if (deal = `git diff origin/#{git_branch}`).any?
+          puts deal.inspect
           puts "You need to commit and push your changes first."
           exit(1)
         end
