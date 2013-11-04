@@ -495,9 +495,9 @@ private
       git_branch = nil
       if (File.exist?(".git"))
         git_branch = `git branch --no-color | egrep '^\\*' | awk '{print $2}'`.chomp
-        if (deal = `git diff origin/#{git_branch}`).any?
-          puts deal.inspect
+        if (diff = `git diff origin/#{git_branch}`).any?
           puts "You need to commit and push your changes first."
+          puts diff
           exit(1)
         end
       end
