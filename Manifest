@@ -5,6 +5,7 @@ Manifest
 README.rdoc
 Rakefile
 echoe.gemspec
+echoe.pem
 lib/echoe.rb
 lib/echoe/extensions.rb
 lib/echoe/platform.rb
