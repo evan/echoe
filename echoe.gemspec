@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.email = ""
   s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README.rdoc", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb"]
   s.files = ["CHANGELOG", "LICENSE", "MIT-LICENSE", "Manifest", "README.rdoc", "Rakefile", "echoe.gemspec", "echoe.pem", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb", "vendor/rake/MIT-LICENSE", "vendor/rake/lib/rake/contrib/compositepublisher.rb", "vendor/rake/lib/rake/contrib/ftptools.rb", "vendor/rake/lib/rake/contrib/publisher.rb", "vendor/rake/lib/rake/contrib/rubyforgepublisher.rb", "vendor/rake/lib/rake/contrib/sshpublisher.rb", "vendor/rake/lib/rake/contrib/sys.rb"]
-  s.homepage = "http://fauna.github.com/fauna/echoe/"
+  s.homepage = "https://github.com/evan/echoe"
   s.licenses = ["Academic Free License (AFL) v. 3.0"]
   s.rdoc_options = ["--line-numbers", "--title", "Echoe", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
