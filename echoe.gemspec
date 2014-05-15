@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
-# stub: echoe 4.6.5 ruby lib
+# stub: echoe 4.6.6 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "echoe"
-  s.version = "4.6.5"
+  s.version = "4.6.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.8.4") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.email = ""
   s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README.rdoc", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb"]
   s.files = ["CHANGELOG", "LICENSE", "MIT-LICENSE", "Manifest", "README.rdoc", "Rakefile", "echoe.gemspec", "echoe.pem", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb", "vendor/rake/MIT-LICENSE", "vendor/rake/lib/rake/contrib/compositepublisher.rb", "vendor/rake/lib/rake/contrib/ftptools.rb", "vendor/rake/lib/rake/contrib/publisher.rb", "vendor/rake/lib/rake/contrib/rubyforgepublisher.rb", "vendor/rake/lib/rake/contrib/sshpublisher.rb", "vendor/rake/lib/rake/contrib/sys.rb"]
-  s.homepage = "https://github.com/evan/echoe"
+  s.homepage = "http://fauna.github.com/fauna/echoe/"
   s.licenses = ["Academic Free License (AFL) v. 3.0"]
   s.rdoc_options = ["--line-numbers", "--title", "Echoe", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
