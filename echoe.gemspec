@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 1.8.4") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
   s.cert_chain = ["/Users/eweaver/cloudburst/github/echoe/echoe.pem"]
-  s.date = "2013-11-04"
+  s.date = "2014-05-15"
   s.description = "A Rubygems packaging tool that provides Rake tasks for documentation, extension compiling, testing, and deployment."
   s.email = ""
   s.extra_rdoc_files = ["CHANGELOG", "LICENSE", "README.rdoc", "lib/echoe.rb", "lib/echoe/extensions.rb", "lib/echoe/platform.rb", "lib/echoe/rubygems.rb"]

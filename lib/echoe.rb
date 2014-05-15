@@ -707,7 +707,7 @@ private
       files << manifest_name
       files.uniq!
 
-      File.open(manifest_name, 'w').puts(files)
+      File.open(manifest_name, 'w') { |f| f.puts(files) }
 
       (files | old_files).sort.each do |file|
         next if file == gemspec_name
