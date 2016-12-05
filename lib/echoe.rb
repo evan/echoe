@@ -148,7 +148,7 @@ class Echoe
   include Rake::DSL
 
   # user-configurable
-  attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :spec_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :require_paths, :changelog, :rcov_options, :gemspec_format, :licenses
+  attr_accessor :author, :changes, :clean_pattern, :description, :email, :runtime_dependencies, :development_dependencies, :need_tgz, :need_tar_gz, :need_gem, :need_zip, :rdoc_pattern, :project, :summary, :test_pattern, :spec_pattern, :url, :version, :docs_host, :rdoc_template, :manifest_name, :install_message, :extension_pattern, :private_key, :certificate_chain, :require_signed, :ruby_version, :platform, :ignore_pattern, :executable_pattern, :require_paths, :changelog, :rcov_options, :gemspec_format, :licenses, :use_git_ls_files
 
   # best left alone
   attr_accessor :name, :lib_files, :test_files, :bin_files, :spec, :rdoc_options, :include_gemspec, :include_rakefile, :gemspec_name, :retain_gemspec, :rakefile_name, :eval, :files, :changelog_patterns, :rubygems_version, :use_sudo, :gem_bin
@@ -192,6 +192,7 @@ class Echoe
     self.rcov_options = []
     self.rdoc_pattern = /^(lib|bin|tasks|ext)|^README|^CHANGELOG|^TODO|^LICENSE|^COPYING$/
 
+    self.use_git_ls_files = false
     self.gemspec_format = :ruby
 
     title = (name.downcase == name ? name.capitalize : name)
@@ -312,7 +313,7 @@ private
   end
 
   def apply_pattern(pattern, files = nil)
-    files ||= Dir['**/**']
+    files ||= all_files
     case pattern
       when String, Array
         files & (Array(pattern).map do |p|
@@ -332,6 +333,16 @@ private
         files
       else
         []
+    end
+  end
+
+  def all_files
+    if use_git_ls_files
+      `git ls-files -z`.split("\x0").reject do |f|
+        f.match(%r{^(test|spec|features)/})
+      end
+    else
+      Dir['**/**']
     end
   end
 
@@ -695,7 +706,8 @@ private
       puts "Building Manifest"
       old_files = files
       files = []
-      Dir['**/**'].sort.each do |file|
+
+      all_files.sort.each do |file|
         next unless file
         next if ignore_pattern.include?(file)
         next if File.directory?(file)
